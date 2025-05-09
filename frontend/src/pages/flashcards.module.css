@@ -1,0 +1,56 @@
+.container {
+    display: flex;
+    flex-direction: column;
+}
+
+.heading {
+    display: flex;
+    justify-content: space-between;
+}
+
+.table {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    /* padding: 1rem; */
+}
+
+.line {
+    grid-column: span 4;
+    border-bottom: 1px solid #999;
+}
+
+.actions {
+    display: flex;
+
+    gap: 5px;
+
+    &>button {
+        flex: 1;
+    }
+}
+
+/* .dialog {
+    background-color: red;
+    position: fixed;
+    top: 100px;
+    left: 100px;
+    z-index: 50;
+}
+
+.dialog-content {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.dialog-panel {
+    background-color: white;
+    width: fit-content;
+
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid #999;
+} */
