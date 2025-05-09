@@ -7,7 +7,7 @@ export function Navigation() {
     return (
         <nav className={styles["nav-bar"]}>
             <Link className={styles["nav-button"]} to="/">Home</Link>
-            <Link className={styles["nav-button"]} to="/flash-cards">Flash Cards</Link>
+            <Link className={styles["nav-button"]} to="/dictionary">Dictionary</Link>
         </nav>
     )
 }

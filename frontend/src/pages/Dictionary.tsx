@@ -1,4 +1,4 @@
-import styles from "./flashcards.module.css";
+import styles from "./dictionary.module.css";
 import { useState } from "react";
 
 const initialFlashCards = [
@@ -12,7 +12,7 @@ const initialFlashCards = [
     },
 ]
 
-export function FlashCards() {
+export function Dictionary() {
     const [flashCards, setFlashCards] = useState(initialFlashCards);
     const [databaseFlashCards, setDatabaseFlashCards] = useState(initialFlashCards);
 
@@ -39,7 +39,7 @@ export function FlashCards() {
     return (
         <div className={styles.container}>
             <div className={styles.heading}>
-                <h1>Flash Cards List</h1>
+                <h1>Dictionary</h1>
                 <div>
                     <button onClick={addCard}>Add Card</button>
                     <button disabled={!areFlashCardsOutOfSync} onClick={() => setDatabaseFlashCards(flashCards)}>Save to Database</button>
@@ -47,21 +47,16 @@ export function FlashCards() {
             </div>
 
             <div className={styles.table}>
-                <p>Number</p>
                 <p>Tagalog</p>
                 <p>English</p>
-                <p>Actions</p>
+                <p></p>
 
                 {flashCards.map((card, index) => (
                     <>
-                        <div className={styles.line}></div>
-                        <p>{index + 1}</p>
+                        <div className={styles.line} />
                         <input type="text" placeholder="Tagalog" name="tagalog" value={card.tagalog} onChange={e => onCardChange(e, index)} />
                         <input type="text" placeholder="English" name="english" value={card.english} onChange={e => onCardChange(e, index)} />
-                        <div className={styles.actions}>
-                            <button>Edit</button>
-                            <button onClick={() => deleteCard(index)}>Delete</button>
-                        </div>
+                        <button onClick={() => deleteCard(index)}>x</button>
                     </>
                 ))}
             </div>
