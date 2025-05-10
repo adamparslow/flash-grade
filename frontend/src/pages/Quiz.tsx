@@ -28,17 +28,20 @@ export function Quiz() {
         value={answer}
         onChange={(e) => setAnswer(e.target.value)}
         disabled={answered}
+        id="answer"
       />
       {answered ? (
         <p>
           {answer === translations[questionNumber].english
             ? "Correct"
-            : "Incorrect"}
+            : `Incorrect: correct answer is ${translations[questionNumber].english}`}
         </p>
       ) : null}
       <button
         onClick={() => {
-          if (answer) {
+          if (answered) {
+            (document.getElementById("answer") as HTMLInputElement).value = "";
+            setAnswer("");
             setQuestionNumber(questionNumber + 1);
             setAnswered(false);
           } else {
