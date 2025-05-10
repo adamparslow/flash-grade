@@ -14,22 +14,21 @@ export type Translation = {
 };
 
 export function Dictionary() {
-  console.log("rerender");
   const [loading, setLoading] = useState(false);
   useEffect(() => {
     setLoading(true);
     getTranslations().then((data) => {
-      setFlashCards(data);
+      setTranslations(data);
       setLoading(false);
     });
   }, []);
 
-  const [flashCards, setFlashCards] = useState<Translation[]>([]);
+  const [translations, setTranslations] = useState<Translation[]>([]);
   const [showAddCard, setShowAddCard] = useState(false);
 
   function deleteCard(index: number) {
-    setFlashCards(flashCards.filter((_, i) => i !== index));
-    const id = flashCards[index].id;
+    setTranslations(translations.filter((_, i) => i !== index));
+    const id = translations[index].id;
     if (id) {
       deleteTranslation(id);
     }
@@ -49,34 +48,20 @@ export function Dictionary() {
     (e.target as HTMLFormElement).english.value = "";
 
     const newTranslation = await createTranslation({ tagalog, english });
-    const newFlashCards = [...flashCards, newTranslation];
-    setFlashCards(
-      newFlashCards.sort((a, b) => a.tagalog.localeCompare(b.tagalog))
+    const newTranslations = [...translations, newTranslation];
+    setTranslations(
+      newTranslations.sort((a, b) => a.tagalog.localeCompare(b.tagalog))
     );
   }
 
-  function onCardChange(e: React.ChangeEvent<HTMLInputElement>, index: number) {
-    console.log(e.target.name, e.target.value);
-    const card = flashCards[index];
-    const updatedCard = {
-      ...card,
-      [e.target.name]: e.target.value,
-    };
-    setFlashCards([
-      ...flashCards.slice(0, index),
-      updatedCard,
-      ...flashCards.slice(index + 1),
-    ]);
-  }
-
   async function onSave(translation: Translation) {
-    const oldTranslation = flashCards.find(
+    const oldTranslation = translations.find(
       (card) => card.id === translation.id
     );
     if (oldTranslation) {
       oldTranslation.tagalog = translation.tagalog;
       oldTranslation.english = translation.english;
-      setFlashCards([...flashCards]);
+      setTranslations([...translations]);
     }
     updateTranslation(translation);
   }
@@ -87,6 +72,7 @@ export function Dictionary() {
         <h1>Dictionary</h1>
         <button onClick={() => setShowAddCard(true)}>Add Card</button>
       </div>
+      <p>{translations.length} translations</p>
 
       {showAddCard && (
         <form onSubmit={addCard}>
@@ -107,7 +93,7 @@ export function Dictionary() {
             <p>Loading...</p>
           </>
         ) : (
-          flashCards.map((card, index) => (
+          translations.map((card, index) => (
             <>
               <div className={styles.line} />
               <DictionaryEntry
@@ -115,7 +101,6 @@ export function Dictionary() {
                 tagalog={card.tagalog}
                 english={card.english}
                 id={card.id}
-                onChange={(e) => onCardChange(e, index)}
                 onDelete={() => deleteCard(index)}
                 onSave={onSave}
               />
@@ -131,14 +116,12 @@ function DictionaryEntry({
   tagalog,
   english,
   id,
-  onChange,
   onDelete,
   onSave,
 }: {
   tagalog: string;
   english: string;
   id?: number;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onDelete: () => void;
   onSave: (translation: Translation) => void;
 }) {
