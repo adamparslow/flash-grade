@@ -2,12 +2,19 @@ import { Link } from "react-router-dom";
 import styles from "./navigation.module.css";
 
 export function Navigation() {
-    console.log(styles);
+  console.log(styles);
 
-    return (
-        <nav className={styles["nav-bar"]}>
-            <Link className={styles["nav-button"]} to="/">Home</Link>
-            <Link className={styles["nav-button"]} to="/dictionary">Dictionary</Link>
-        </nav>
-    )
+  return (
+    <nav className={styles["nav-bar"]}>
+      <Link className={styles["nav-button"]} to="/">
+        Home
+      </Link>
+      <Link className={styles["nav-button"]} to="/dictionary">
+        Dictionary
+      </Link>
+      <Link className={styles["nav-button"]} to="/quiz">
+        Quiz
+      </Link>
+    </nav>
+  );
 }

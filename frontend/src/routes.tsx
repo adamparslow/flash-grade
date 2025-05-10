@@ -1,11 +1,12 @@
-import { RouteObject } from 'react-router-dom';
-import { Home } from './pages/Home';
-import { Dictionary } from './pages/Dictionary';
-import { Layout } from './components/Layout';
+import { RouteObject } from "react-router-dom";
+import { Home } from "./pages/Home";
+import { Dictionary } from "./pages/Dictionary";
+import { Layout } from "./components/Layout";
+import { Quiz } from "./pages/Quiz";
 
 export const routes: RouteObject[] = [
   {
-    path: '/',
+    path: "/",
     element: <Layout />,
     children: [
       {
@@ -13,9 +14,13 @@ export const routes: RouteObject[] = [
         element: <Home />,
       },
       {
-        path: 'dictionary',
+        path: "dictionary",
         element: <Dictionary />,
+      },
+      {
+        path: "quiz",
+        element: <Quiz />,
       },
     ],
   },
-]; 
+];

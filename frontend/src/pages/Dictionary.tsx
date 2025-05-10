@@ -14,6 +14,7 @@ export type Translation = {
 };
 
 export function Dictionary() {
+  const [translations, setTranslations] = useState<Translation[]>([]);
   const [loading, setLoading] = useState(false);
   useEffect(() => {
     setLoading(true);
@@ -23,7 +24,6 @@ export function Dictionary() {
     });
   }, []);
 
-  const [translations, setTranslations] = useState<Translation[]>([]);
   const [showAddCard, setShowAddCard] = useState(false);
 
   function deleteCard(index: number) {
