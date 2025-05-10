@@ -25,6 +25,7 @@ export function Dictionary() {
   }, []);
 
   const [flashCards, setFlashCards] = useState<Translation[]>([]);
+  const [showAddCard, setShowAddCard] = useState(false);
 
   function deleteCard(index: number) {
     setFlashCards(flashCards.filter((_, i) => i !== index));
@@ -34,12 +35,24 @@ export function Dictionary() {
     }
   }
 
-  function addCard() {
-    const lastTranslation = flashCards[flashCards.length - 1];
-    if (lastTranslation.id === undefined) {
+  async function addCard(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+
+    const tagalog = (e.target as HTMLFormElement).tagalog.value;
+    const english = (e.target as HTMLFormElement).english.value;
+
+    if (tagalog === "" || english === "") {
       return;
     }
-    setFlashCards([...flashCards, { tagalog: "", english: "" }]);
+
+    (e.target as HTMLFormElement).tagalog.value = "";
+    (e.target as HTMLFormElement).english.value = "";
+
+    const newTranslation = await createTranslation({ tagalog, english });
+    const newFlashCards = [...flashCards, newTranslation];
+    setFlashCards(
+      newFlashCards.sort((a, b) => a.tagalog.localeCompare(b.tagalog))
+    );
   }
 
   function onCardChange(e: React.ChangeEvent<HTMLInputElement>, index: number) {
@@ -56,30 +69,32 @@ export function Dictionary() {
     ]);
   }
 
-  function onSave(translation: Translation) {
-    if (translation.id) {
-      const oldTranslation = flashCards.find(
-        (card) => card.id === translation.id
-      );
-      if (oldTranslation) {
-        oldTranslation.tagalog = translation.tagalog;
-        oldTranslation.english = translation.english;
-        setFlashCards([...flashCards]);
-      }
-      updateTranslation(translation);
-      return;
+  async function onSave(translation: Translation) {
+    const oldTranslation = flashCards.find(
+      (card) => card.id === translation.id
+    );
+    if (oldTranslation) {
+      oldTranslation.tagalog = translation.tagalog;
+      oldTranslation.english = translation.english;
+      setFlashCards([...flashCards]);
     }
-
-    createTranslation(translation);
-    setFlashCards([...flashCards.slice(0, -1), translation]);
+    updateTranslation(translation);
   }
 
   return (
     <div className={styles.container}>
       <div className={styles.heading}>
         <h1>Dictionary</h1>
-        <button onClick={addCard}>Add Card</button>
+        <button onClick={() => setShowAddCard(true)}>Add Card</button>
       </div>
+
+      {showAddCard && (
+        <form onSubmit={addCard}>
+          <input type="text" placeholder="Tagalog" name="tagalog" />
+          <input type="text" placeholder="English" name="english" />
+          <button type="submit">Add</button>
+        </form>
+      )}
 
       <div className={styles.table}>
         <p>Tagalog</p>
