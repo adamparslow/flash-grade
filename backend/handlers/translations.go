@@ -4,38 +4,18 @@ import (
 	"backend/db"
 	"backend/entities"
 	"encoding/json"
-	"fmt"
 	"net/http"
+	"strconv"
 )
 
-func TranslationsHandler() http.Handler {
-	translationsMux := http.NewServeMux()
-
-	translationsMux.HandleFunc("GET /api/translations", func(w http.ResponseWriter, r *http.Request) {
-		getTranslations(w, r)
-	})
-
-	translationsMux.HandleFunc("POST /api/translations", func(w http.ResponseWriter, r *http.Request) {
-		createTranslation(w, r)
-	})
-
-	translationsMux.HandleFunc("PUT /api/translations/{translationId}", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Println("PUT /api/translations/{translationId}")
-		fmt.Println(r.PathValue("translationId"))
-		updateTranslation(w, r)
-	})
-
-	translationsMux.HandleFunc("DELETE /api/translations/{translationId}", func(w http.ResponseWriter, r *http.Request) {
-		deleteTranslation(w, r)
-	})
-
-	return translationsMux
+func TranslationsHandler(mux *http.ServeMux) {
+	mux.HandleFunc("GET /api/translations", getTranslations)
+	mux.HandleFunc("POST /api/translations", createTranslation)
+	mux.HandleFunc("PUT /api/translations/{translationId}", updateTranslation)
+	mux.HandleFunc("DELETE /api/translations/{translationId}", deleteTranslation)
 }
 
 func getTranslations(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Content-Type", "application/json")
-
 	translations, err := db.GetTranslationsFromDB()
 
 	if err != nil {
@@ -48,9 +28,6 @@ func getTranslations(w http.ResponseWriter, r *http.Request) {
 }
 
 func createTranslation(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Content-Type", "application/json")
-
 	var translation entities.Translation
 	err := json.NewDecoder(r.Body).Decode(&translation)
 	if err != nil {
@@ -70,10 +47,8 @@ func createTranslation(w http.ResponseWriter, r *http.Request) {
 }
 
 func updateTranslation(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Content-Type", "application/json")
-
-	id, err := getIdFromPath(r)
+	translationIdPathValue := r.PathValue("translationId")
+	translationId, err := strconv.ParseInt(translationIdPathValue, 10, 64)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -81,11 +56,13 @@ func updateTranslation(w http.ResponseWriter, r *http.Request) {
 
 	var translation entities.Translation
 	err = json.NewDecoder(r.Body).Decode(&translation)
+
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	translation.ID = &id
+
+	translation.ID = &translationId
 
 	err = db.UpdateTranslationInDB(translation)
 
@@ -102,16 +79,14 @@ func updateTranslation(w http.ResponseWriter, r *http.Request) {
 }
 
 func deleteTranslation(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Content-Type", "application/json")
-
-	id, err := getIdFromPath(r)
+	translationIdPathValue := r.PathValue("translationId")
+	translationId, err := strconv.ParseInt(translationIdPathValue, 10, 64)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	err = db.DeleteTranslationInDB(id)
+	err = db.DeleteTranslationInDB(translationId)
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

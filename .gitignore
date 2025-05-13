@@ -4,6 +4,7 @@ frontend/build
 
 # Go
 backend/server
+backend/tmp
 
 # Misc
 .env

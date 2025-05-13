@@ -1,20 +1,8 @@
 package handlers
 
 import (
-	"fmt"
 	"net/http"
-	"strconv"
-	"strings"
 )
-
-func getIdFromPath(r *http.Request) (int64, error) {
-	idStr := strings.TrimPrefix(r.URL.Path, "/api/translations/")
-	fmt.Println(idStr)
-
-	id, err := strconv.ParseInt(idStr, 10, 64)
-
-	return id, err
-}
 
 func CorsMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -22,6 +10,7 @@ func CorsMiddleware(next http.Handler) http.Handler {
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
 		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+		w.Header().Set("Content-Type", "application/json")
 
 		// Handle preflight (OPTIONS) request
 		if r.Method == http.MethodOptions {

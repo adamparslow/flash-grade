@@ -13,11 +13,8 @@ func main() {
 		port = "10000"
 	}
 
-	mainMux := http.NewServeMux()
-	mainMux.Handle("/", handlers.TranslationsHandler())
-
-	corsHandler := handlers.CorsMiddleware(mainMux)
+	router := handlers.Router()
 
 	fmt.Println("Starting server on port", port)
-	http.ListenAndServe(":"+port, corsHandler)
+	http.ListenAndServe(":"+port, router)
 }
