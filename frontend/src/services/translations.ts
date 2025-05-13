@@ -1,33 +1,18 @@
 import type { Translation } from "../pages/Dictionary";
-
-const BACKEND_URL = import.meta.env.VITE_API_URL || "http://localhost:10000";
+import { httpFetch } from "./helper";
 
 export async function getTranslations() {
-    const response = await fetch(`${BACKEND_URL}/api/translations`);
-    const data = await response.json();
-    return data;
+    return httpFetch("translations", "GET");
 }
 
 export async function updateTranslation(translation: Translation) {
-    const response = await fetch(`${BACKEND_URL}/api/translations/${translation.id}`, {
-        method: "PUT",
-        body: JSON.stringify(translation),
-    });
-
-    return response.json();
+    return httpFetch(`translations/${translation.id}`, "PUT", translation);
 }
 
 export async function createTranslation(translation: Translation) {
-    const response = await fetch(`${BACKEND_URL}/api/translations`, {
-        method: "POST",
-        body: JSON.stringify({ tagalog: translation.tagalog, english: translation.english }),
-    });
-    return response.json(); 
+    return httpFetch("translations", "POST", { tagalog: translation.tagalog, english: translation.english });
 }
 
 export async function deleteTranslation(id: number) {
-    const response = await fetch(`${BACKEND_URL}/api/translations/${id}`, {
-        method: "DELETE",
-    });
-    return response.json();
+    return httpFetch(`translations/${id}`, "DELETE");
 }
