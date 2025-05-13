@@ -22,10 +22,10 @@ export function Quiz() {
     <div className="flex flex-col gap-5 h-full">
       <p>{questionNumber + 1}/15</p>
       <div className="h-1/3" />
-      {/* <TextQuestion
+      <SingleQuestion
         translation={translations[questionNumber]}
         onNext={() => setQuestionNumber(questionNumber + 1)}
-      /> */}
+      />
       <MultiQuestion
         translation={translations[questionNumber]}
         alternatives={translations

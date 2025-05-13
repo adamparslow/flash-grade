@@ -1,8 +1,8 @@
 import {
   createTranslation,
-  deleteTranslation,
+  // deleteTranslation,
   getTranslations,
-  updateTranslation,
+  // updateTranslation,
 } from "../services/translations";
 import styles from "./dictionary.module.css";
 import { useEffect, useState } from "react";
@@ -26,13 +26,13 @@ export function Dictionary() {
 
   const [showAddCard, setShowAddCard] = useState(false);
 
-  function deleteCard(index: number) {
-    setTranslations(translations.filter((_, i) => i !== index));
-    const id = translations[index].id;
-    if (id) {
-      deleteTranslation(id);
-    }
-  }
+  // function deleteCard(index: number) {
+  //   setTranslations(translations.filter((_, i) => i !== index));
+  //   const id = translations[index].id;
+  //   if (id) {
+  //     deleteTranslation(id);
+  //   }
+  // }
 
   async function addCard(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -54,17 +54,17 @@ export function Dictionary() {
     );
   }
 
-  async function onSave(translation: Translation) {
-    const oldTranslation = translations.find(
-      (card) => card.id === translation.id
-    );
-    if (oldTranslation) {
-      oldTranslation.tagalog = translation.tagalog;
-      oldTranslation.english = translation.english;
-      setTranslations([...translations]);
-    }
-    updateTranslation(translation);
-  }
+  // async function onSave(translation: Translation) {
+  //   const oldTranslation = translations.find(
+  //     (card) => card.id === translation.id
+  //   );
+  //   if (oldTranslation) {
+  //     oldTranslation.tagalog = translation.tagalog;
+  //     oldTranslation.english = translation.english;
+  //     setTranslations([...translations]);
+  //   }
+  //   updateTranslation(translation);
+  // }
 
   return (
     <div className={styles.container}>
@@ -100,8 +100,8 @@ export function Dictionary() {
                 tagalog={card.tagalog}
                 english={card.english}
                 id={card.id}
-                onDelete={() => deleteCard(index)}
-                onSave={onSave}
+                // onDelete={() => deleteCard(index)}
+                // onSave={onSave}
                 bottom={index === translations.length - 1}
               />
             </>
@@ -116,15 +116,15 @@ function DictionaryEntry({
   tagalog,
   english,
   id,
-  onDelete,
-  onSave,
+  // onDelete,
+  // onSave,
   bottom,
 }: {
   tagalog: string;
   english: string;
   id?: number;
-  onDelete: () => void;
-  onSave: (translation: Translation) => void;
+  // onDelete: () => void;
+  // onSave: (translation: Translation) => void;
   bottom?: boolean;
 }) {
   const [translation, setTranslation] = useState<Translation>({
@@ -132,20 +132,21 @@ function DictionaryEntry({
     tagalog,
     english,
   });
-  function save() {
-    if (translation.tagalog === "" || translation.english === "") {
-      return;
-    }
+  // function save() {
+  //   if (translation.tagalog === "" || translation.english === "") {
+  //     return;
+  //   }
 
-    setIsEditing(false);
+  //   setIsEditing(false);
 
-    onSave(translation);
-  }
+  //   onSave(translation);
+  // }
 
-  function edit() {
-    setIsEditing(true);
-  }
-  const [isEditing, setIsEditing] = useState(tagalog === "" || english === "");
+  // function edit() {
+  //   setIsEditing(true);
+  // }
+  // const [isEditing, setIsEditing] = useState(tagalog === "" || english === "");
+  const isEditing = false;
 
   return (
     <>
