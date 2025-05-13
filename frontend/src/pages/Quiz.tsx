@@ -13,8 +13,6 @@ export function Quiz() {
   }, []);
 
   const [questionNumber, setQuestionNumber] = useState(0);
-  const [answer, setAnswer] = useState("");
-  const [answered, setAnswered] = useState(false);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -22,8 +20,35 @@ export function Quiz() {
 
   return (
     <div>
-      <p>{questionNumber}</p>
-      <p>{translations[questionNumber].tagalog}</p>
+      <p>{questionNumber + 1}/15</p>
+      {/* <TextQuestion
+        translation={translations[questionNumber]}
+        onNext={() => setQuestionNumber(questionNumber + 1)}
+      /> */}
+      <FourQuestion
+        translation={translations[questionNumber]}
+        alternatives={translations
+          .slice(questionNumber + 1, questionNumber + 4)
+          .map((t) => t.tagalog)}
+        onNext={() => setQuestionNumber(questionNumber + 1)}
+      />
+    </div>
+  );
+}
+
+function TextQuestion({
+  translation,
+  onNext,
+}: {
+  translation: Translation;
+  onNext: () => void;
+}) {
+  const [answer, setAnswer] = useState("");
+  const [answered, setAnswered] = useState(false);
+
+  return (
+    <>
+      <p>{translation.tagalog}</p>
       <input
         value={answer}
         onChange={(e) => setAnswer(e.target.value)}
@@ -32,9 +57,9 @@ export function Quiz() {
       />
       {answered ? (
         <p>
-          {answer === translations[questionNumber].english
+          {answer === translation.english
             ? "Correct"
-            : `Incorrect: correct answer is ${translations[questionNumber].english}`}
+            : `Incorrect: correct answer is ${translation.english}`}
         </p>
       ) : null}
       <button
@@ -42,7 +67,7 @@ export function Quiz() {
           if (answered) {
             (document.getElementById("answer") as HTMLInputElement).value = "";
             setAnswer("");
-            setQuestionNumber(questionNumber + 1);
+            onNext();
             setAnswered(false);
           } else {
             setAnswered(true);
@@ -51,44 +76,78 @@ export function Quiz() {
       >
         {answered ? "Next" : "Answer"}
       </button>
-    </div>
+    </>
   );
 }
 
-function Question({
+function FourQuestion({
   translation,
-  onAnswer,
+  alternatives,
+  onNext,
 }: {
   translation: Translation;
-  onAnswer: (answer: string) => void;
+  alternatives: string[];
+  onNext: () => void;
 }) {
-  const [answer, setAnswer] = useState("");
+  const [answered, setAnswered] = useState(false);
+  const [correct, setCorrect] = useState(false);
 
   return (
-    <div>
-      <p>{translation.tagalog}</p>
-      <input
-        type="text"
-        value={answer}
-        onChange={(e) => setAnswer(e.target.value)}
-        name="answer"
-      />
-      <button onClick={() => onAnswer(answer)}>Answer</button>
-    </div>
-  );
-}
-
-function Answer({
-  translation,
-  answer,
-}: {
-  translation: Translation;
-  answer: string;
-}) {
-  return (
-    <div>
-      <p>{translation.tagalog}</p>
-      <p>{answer}</p>
-    </div>
+    <>
+      <p>{translation.english}</p>
+      <div>
+        <button
+          onClick={() => {
+            setCorrect(false);
+            setAnswered(true);
+          }}
+        >
+          {alternatives[0]}
+        </button>
+        <button
+          onClick={() => {
+            setCorrect(true);
+            setAnswered(true);
+          }}
+        >
+          {translation.tagalog}
+        </button>
+        <button
+          onClick={() => {
+            setCorrect(false);
+            setAnswered(true);
+          }}
+        >
+          {alternatives[1]}
+        </button>
+        <button
+          onClick={() => {
+            setCorrect(false);
+            setAnswered(true);
+          }}
+        >
+          {alternatives[2]}
+        </button>
+      </div>
+      {answered ? (
+        <>
+          <p>
+            {correct
+              ? "Correct"
+              : `Incorrect: correct answer is ${translation.tagalog}`}
+          </p>
+          <button
+            onClick={() => {
+              (document.getElementById("answer") as HTMLInputElement).value =
+                "";
+              onNext();
+              setAnswered(false);
+            }}
+          >
+            {answered ? "Next" : "Answer"}
+          </button>
+        </>
+      ) : null}
+    </>
   );
 }
