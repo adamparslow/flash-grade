@@ -1,4 +1,4 @@
-package main
+package db
 
 import (
 	"database/sql"
@@ -8,6 +8,8 @@ import (
 
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
+
+	"backend/entities"
 )
 
 var db *sql.DB
@@ -21,14 +23,11 @@ func init() {
 
 func initDB() {
 	connStr := os.Getenv("DATABASE_URL") // safer than hardcoding
-	fmt.Println(connStr)
 	var err error
 	db, err = sql.Open("postgres", connStr)
 	if err != nil {
 		log.Fatal("Error opening database:", err)
 	}
-
-	fmt.Println(db.Stats())
 
 	err = db.Ping()
 	if err != nil {
@@ -38,18 +37,18 @@ func initDB() {
 	fmt.Println("Connected to the database.")
 }
 
-func GetTranslationsFromDB() ([]Translation, error) {
+func GetTranslationsFromDB() ([]entities.Translation, error) {
 	rows, err := db.Query("SELECT id, tagalog, english FROM translations ORDER BY tagalog ASC")
 
 	if err != nil {
 		return nil, err
 	}
 
-	var translations []Translation
+	var translations []entities.Translation
 	defer rows.Close()
 
 	for rows.Next() {
-		var t Translation
+		var t entities.Translation
 		err := rows.Scan(&t.ID, &t.Tagalog, &t.English)
 		if err != nil {
 			return nil, err
@@ -64,12 +63,12 @@ func GetTranslationsFromDB() ([]Translation, error) {
 	return translations, nil
 }
 
-func UpdateTranslationInDB(translation Translation) error {
+func UpdateTranslationInDB(translation entities.Translation) error {
 	_, err := db.Exec("UPDATE translations SET tagalog = $1, english = $2 WHERE id = $3", translation.Tagalog, translation.English, translation.ID)
 	return err
 }
 
-func CreateTranslationInDB(translation Translation) (int64, error) {
+func CreateTranslationInDB(translation entities.Translation) (int64, error) {
 	var id int64
 
 	err := db.QueryRow("INSERT INTO translations (tagalog, english) VALUES ($1, $2) RETURNING id", translation.Tagalog, translation.English).Scan(&id)
