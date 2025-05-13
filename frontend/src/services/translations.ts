@@ -1,6 +1,6 @@
-import { Translation } from "../pages/Dictionary";
+import type { Translation } from "../pages/Dictionary";
 
-const BACKEND_URL = process.env.REACT_APP_API_URL || "http://localhost:10000";
+const BACKEND_URL = import.meta.env.VITE_API_URL || "http://localhost:10000";
 
 export async function getTranslations() {
     const response = await fetch(`${BACKEND_URL}/api/translations`);

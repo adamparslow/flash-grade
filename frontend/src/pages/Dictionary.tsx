@@ -83,9 +83,8 @@ export function Dictionary() {
       )}
 
       <div className={styles.table}>
-        <p>Tagalog</p>
-        <p>English</p>
-        <p></p>
+        <DictionaryText left>Tagalog</DictionaryText>
+        <DictionaryText>English</DictionaryText>
 
         {loading ? (
           <>
@@ -95,7 +94,7 @@ export function Dictionary() {
         ) : (
           translations.map((card, index) => (
             <>
-              <div className={styles.line} />
+              {/* <div className="border-t-2 border-gray-300 col-span-2" /> */}
               <DictionaryEntry
                 key={`${card.tagalog}-${card.english}`}
                 tagalog={card.tagalog}
@@ -103,6 +102,7 @@ export function Dictionary() {
                 id={card.id}
                 onDelete={() => deleteCard(index)}
                 onSave={onSave}
+                bottom={index === translations.length - 1}
               />
             </>
           ))
@@ -118,12 +118,14 @@ function DictionaryEntry({
   id,
   onDelete,
   onSave,
+  bottom,
 }: {
   tagalog: string;
   english: string;
   id?: number;
   onDelete: () => void;
   onSave: (translation: Translation) => void;
+  bottom?: boolean;
 }) {
   const [translation, setTranslation] = useState<Translation>({
     id,
@@ -176,20 +178,48 @@ function DictionaryEntry({
         </>
       ) : (
         <>
-          <p>{tagalog}</p>
-          <p>{english}</p>
+          <DictionaryText left bottom={bottom}>
+            {tagalog}
+          </DictionaryText>
+          <DictionaryText bottom={bottom}>{english}</DictionaryText>
         </>
       )}
-      <div>
+      {/* <div className="flex gap-2">
         <button
+          className="bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600"
           onClick={() => {
             isEditing ? save() : edit();
           }}
         >
           {isEditing ? "Save" : "Edit"}
         </button>
-        <button onClick={onDelete}>x</button>
-      </div>
+        <button
+          className="bg-red-500 text-white p-2 rounded-md hover:bg-red-600"
+          onClick={onDelete}
+        >
+          x
+        </button>
+      </div> */}
     </>
+  );
+}
+
+function DictionaryText({
+  children,
+  left,
+  bottom,
+}: {
+  children: React.ReactNode;
+  left?: boolean;
+  bottom?: boolean;
+}) {
+  return (
+    <p
+      className={`${
+        left ? "border-r-2 bg-amber-50" : "bg-blue-50"
+      } p-2 border-gray-400 ${bottom ? "" : "border-b-2"}`}
+    >
+      {children}
+    </p>
   );
 }
