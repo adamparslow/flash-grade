@@ -1,9 +1,7 @@
 import { useEffect, useState } from "react";
-import type { Translation } from "./Dictionary";
 import { getQuestions, type Question } from "../services/questions";
 
 export function Quiz() {
-  // const [translations, setTranslations] = useState<Translation[]>([]);
   const [questions, setQuestions] = useState<Question[]>([]);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
@@ -169,8 +167,6 @@ function QuestionButton({
 function MatchQuestion({ question, onNext }: QuestionProps) {
   const [selectedLeft, setSelectedLeft] = useState<number | null>(null);
   const [selectedRight, setSelectedRight] = useState<number | null>(null);
-  const [incorrectLeft, setIncorrectLeft] = useState<number[]>([]);
-  const [incorrectRight, setIncorrectRight] = useState<number[]>([]);
 
   const [correctId, setCorrectId] = useState<number[]>([]);
 
@@ -234,6 +230,13 @@ function MatchQuestion({ question, onNext }: QuestionProps) {
           </MatchQuestionButton>
         ))}
       </div>
+      <button
+        onClick={() => {
+          onNext();
+        }}
+      >
+        Next
+      </button>
     </div>
   );
 }
