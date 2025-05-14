@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
 import type { Translation } from "./Dictionary";
-import { getTranslations } from "../services/translations";
+import { getQuestions, type Question } from "../services/questions";
 
 export function Quiz() {
-  const [translations, setTranslations] = useState<Translation[]>([]);
+  // const [translations, setTranslations] = useState<Translation[]>([]);
+  const [questions, setQuestions] = useState<Question[]>([]);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
-    getTranslations().then((data) => {
-      setTranslations(data);
+    getQuestions().then((data) => {
+      setQuestions(data);
       setLoading(false);
     });
   }, []);
@@ -18,43 +19,60 @@ export function Quiz() {
     return <div>Loading...</div>;
   }
 
+  const question = questions[questionNumber];
+  console.log(question);
+
   return (
     <div className="flex flex-col gap-5 h-full">
       <p>{questionNumber + 1}/15</p>
-      <div className="h-1/3" />
-      <SingleQuestion
-        translation={translations[questionNumber]}
-        onNext={() => setQuestionNumber(questionNumber + 1)}
-      />
-      <MultiQuestion
-        translation={translations[questionNumber]}
-        alternatives={translations
-          .slice(questionNumber + 1, questionNumber + 4)
-          .map((t) => t.tagalog)}
-        onNext={() => setQuestionNumber(questionNumber + 1)}
-      />
+      {question.type === "SINGLE" ? (
+        <SingleQuestion
+          key={question.translations[0].id}
+          question={question}
+          onNext={() => setQuestionNumber(questionNumber + 1)}
+        />
+      ) : question.type === "MULTI" ? (
+        <MultiQuestion
+          key={question.translations[0].id}
+          question={question}
+          onNext={() => setQuestionNumber(questionNumber + 1)}
+        />
+      ) : (
+        <MatchQuestion
+          key={question.translations[0].id}
+          question={question}
+          onNext={() => setQuestionNumber(questionNumber + 1)}
+        />
+      )}
     </div>
   );
 }
 
-function SingleQuestion({
-  translation,
-  onNext,
-}: {
-  translation: Translation;
+interface QuestionProps {
+  question: Question;
   onNext: () => void;
-}) {
+}
+
+function SingleQuestion({ question, onNext }: QuestionProps) {
   const [answer, setAnswer] = useState("");
   const [answered, setAnswered] = useState(false);
 
+  const translation = question.translations[0];
+
   return (
-    <>
+    <div className="flex flex-col gap-5 h-full p-5">
       <p>{translation.tagalog}</p>
       <input
         value={answer}
         onChange={(e) => setAnswer(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" && !answered) {
+            setAnswered(true);
+          }
+        }}
         disabled={answered}
         id="answer"
+        className="p-2 rounded-md border-2 border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
       />
       {answered ? (
         <p>
@@ -69,7 +87,6 @@ function SingleQuestion({
             (document.getElementById("answer") as HTMLInputElement).value = "";
             setAnswer("");
             onNext();
-            setAnswered(false);
           } else {
             setAnswered(true);
           }
@@ -77,74 +94,48 @@ function SingleQuestion({
       >
         {answered ? "Next" : "Answer"}
       </button>
-    </>
+    </div>
   );
 }
 
-function MultiQuestion({
-  translation,
-  alternatives,
-  onNext,
-}: {
-  translation: Translation;
-  alternatives: string[];
-  onNext: () => void;
-}) {
+function MultiQuestion({ question, onNext }: QuestionProps) {
   const [answered, setAnswered] = useState(false);
   const [correct, setCorrect] = useState(false);
 
+  const correctIndex = (question.translations[0].id || 0) % 4;
+  const correctTranslation = question.translations[correctIndex];
+  const answers = question.translations.map((t) => t.tagalog);
+
   return (
-    <div className="flex flex-col gap-5 h-full">
-      <p>{translation.english}</p>
-      <div className="flex gap-2 justify-center">
-        <QuestionButton
-          onClick={() => {
-            setCorrect(false);
-            setAnswered(true);
-          }}
-        >
-          {alternatives[0]}
-        </QuestionButton>
-        <QuestionButton
-          onClick={() => {
-            setCorrect(true);
-            setAnswered(true);
-          }}
-          correct
-        >
-          {translation.tagalog}
-        </QuestionButton>
-        <QuestionButton
-          onClick={() => {
-            setCorrect(false);
-            setAnswered(true);
-          }}
-        >
-          {alternatives[1]}
-        </QuestionButton>
-        <QuestionButton
-          onClick={() => {
-            setCorrect(false);
-            setAnswered(true);
-          }}
-        >
-          {alternatives[2]}
-        </QuestionButton>
+    <div className="flex flex-col gap-5 h-full p-5">
+      <p>{correctTranslation.english}</p>
+      <div className="grid grid-cols-2 gap-2 justify-center">
+        {answers.map((answer, index) => (
+          <QuestionButton
+            key={index}
+            onClick={() => {
+              setCorrect(answer === correctTranslation.tagalog);
+              setAnswered(true);
+            }}
+            correct={answer === correctTranslation.tagalog}
+          >
+            {answer}
+          </QuestionButton>
+        ))}
       </div>
       {answered ? (
         <>
           <p className={correct ? "text-green-600" : "text-red-400"}>
             {correct
               ? "Correct"
-              : `Incorrect: correct answer is ${translation.tagalog}`}
+              : `Incorrect: correct answer is ${correctTranslation.tagalog}`}
           </p>
           <button
             onClick={() => {
-              (document.getElementById("answer") as HTMLInputElement).value =
-                "";
               onNext();
               setAnswered(false);
             }}
+            className="bg-gray-300 text-white p-2 rounded-md hover:bg-gray-600 cursor-pointer"
           >
             {answered ? "Next" : "Answer"}
           </button>
@@ -169,6 +160,108 @@ function QuestionButton({
       className={`${
         correct ? "focus:bg-green-600" : "focus:bg-red-700"
       } focus:text-white bg-gray-200 text-black p-2 rounded-md hover:bg-gray-400 cursor-pointer`}
+    >
+      {children}
+    </button>
+  );
+}
+
+function MatchQuestion({ question, onNext }: QuestionProps) {
+  const [selectedLeft, setSelectedLeft] = useState<number | null>(null);
+  const [selectedRight, setSelectedRight] = useState<number | null>(null);
+  const [incorrectLeft, setIncorrectLeft] = useState<number[]>([]);
+  const [incorrectRight, setIncorrectRight] = useState<number[]>([]);
+
+  const [correctId, setCorrectId] = useState<number[]>([]);
+
+  console.log(selectedLeft, selectedRight);
+
+  return (
+    <div className="flex gap-5 h-full p-5">
+      <div className="flex flex-col justify-stretch flex-1 gap-2">
+        {question.translations.map((translation) => (
+          <MatchQuestionButton
+            key={`left${translation.id}`}
+            correct={correctId.includes(translation.id || 0)}
+            show={
+              Boolean(
+                selectedLeft && selectedRight && selectedLeft === translation.id
+              ) || correctId.includes(translation.id || 0)
+            }
+            onClick={() => {
+              if (selectedRight && selectedLeft) {
+                setSelectedLeft(translation.id || 0);
+                setSelectedRight(null);
+                return;
+              }
+              setSelectedLeft(translation.id || 0);
+              if (selectedRight === translation.id) {
+                setCorrectId([...correctId, translation.id || 0]);
+              }
+            }}
+            disabled={correctId.includes(translation.id || 0)}
+          >
+            {translation.english}
+          </MatchQuestionButton>
+        ))}
+      </div>
+      <div className="flex flex-col flex-1 gap-2">
+        {question.translations.map((translation) => (
+          <MatchQuestionButton
+            key={`right${translation.id}`}
+            correct={correctId.includes(translation.id || 0)}
+            show={
+              Boolean(
+                selectedLeft &&
+                  selectedRight &&
+                  selectedRight === translation.id
+              ) || correctId.includes(translation.id || 0)
+            }
+            onClick={() => {
+              if (selectedRight && selectedLeft) {
+                setSelectedLeft(null);
+                setSelectedRight(translation.id || 0);
+                return;
+              }
+              setSelectedRight(translation.id || 0);
+              if (selectedLeft === translation.id) {
+                setCorrectId([...correctId, translation.id || 0]);
+              }
+            }}
+            disabled={correctId.includes(translation.id || 0)}
+          >
+            {translation.tagalog}
+          </MatchQuestionButton>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function MatchQuestionButton({
+  children,
+  onClick,
+  correct,
+  show,
+  disabled,
+}: {
+  children: React.ReactNode;
+  onClick: () => void;
+  correct?: boolean;
+  show?: boolean;
+  disabled?: boolean;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className={`${
+        correct && show
+          ? "bg-green-600 text-white"
+          : !correct && show
+          ? "bg-red-700 text-white"
+          : "bg-gray-200 text-black"
+      } p-2 rounded-md hover:bg-gray-400 cursor-pointer focus:bg-blue-600 focus:text-white`}
+      disabled={disabled}
     >
       {children}
     </button>

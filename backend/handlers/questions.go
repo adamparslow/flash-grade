@@ -42,7 +42,7 @@ func getQuestions(w http.ResponseWriter, r *http.Request) {
 			question = entities.Question{
 				Translations: []entities.Translation{translation},
 				Alternatives: []string{},
-				QuestionType: "SINGLE",
+				Type:         "SINGLE",
 				EnglishFirst: isEnglishQuestion(),
 			}
 		case "MULTI":
@@ -60,7 +60,7 @@ func getQuestions(w http.ResponseWriter, r *http.Request) {
 			question = entities.Question{
 				Translations: questionTranslations,
 				Alternatives: []string{},
-				QuestionType: "MULTI",
+				Type:         "MULTI",
 				EnglishFirst: isEnglishQuestion(),
 			}
 
@@ -79,7 +79,7 @@ func getQuestions(w http.ResponseWriter, r *http.Request) {
 			question = entities.Question{
 				Translations: questionTranslations,
 				Alternatives: []string{},
-				QuestionType: "MATCH",
+				Type:         "MATCH",
 				EnglishFirst: isEnglishQuestion(),
 			}
 		}
