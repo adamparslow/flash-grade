@@ -9,12 +9,6 @@ export function Navigation() {
       <Link className={styles["nav-button"]} to="/">
         Home
       </Link>
-      <Link className={styles["nav-button"]} to="/dictionary">
-        Dictionary
-      </Link>
-      <Link className={styles["nav-button"]} to="/quiz">
-        Quiz
-      </Link>
     </nav>
   );
 }
