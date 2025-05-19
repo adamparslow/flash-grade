@@ -1,0 +1,13 @@
+{
+  "name": "Flash Grade",
+  "short_name": "FlashGrade",
+  "start_url": "/",
+  "display": "standalone",
+  "icons": [
+    {
+      "src": "/icon.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    }
+  ]
+}
