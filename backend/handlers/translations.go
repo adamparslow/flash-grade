@@ -4,6 +4,7 @@ import (
 	"backend/db"
 	"backend/entities"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
 )
@@ -16,6 +17,8 @@ func TranslationsHandler(mux *http.ServeMux) {
 }
 
 func getTranslations(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("Getting translations")
+
 	translations, err := db.GetTranslationsFromDB()
 
 	if err != nil {
