@@ -3,6 +3,7 @@ import { Home } from "./pages/Home";
 import { Dictionary } from "./pages/Dictionary";
 import { Layout } from "./components/Layout";
 import { Quiz } from "./pages/Quiz";
+import { AddTranslation } from "./pages/Dictionary/AddTranslation";
 
 export const routes: RouteObject[] = [
   {
@@ -20,6 +21,10 @@ export const routes: RouteObject[] = [
       {
         path: "quiz",
         element: <Quiz />,
+      },
+      {
+        path: "dictionary/add",
+        element: <AddTranslation />,
       },
     ],
   },

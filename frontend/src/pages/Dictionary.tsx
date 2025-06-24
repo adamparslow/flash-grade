@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import {
   createTranslation,
   // deleteTranslation,
@@ -24,8 +25,6 @@ export function Dictionary() {
     });
   }, []);
 
-  const [showAddCard, setShowAddCard] = useState(false);
-
   // function deleteCard(index: number) {
   //   setTranslations(translations.filter((_, i) => i !== index));
   //   const id = translations[index].id;
@@ -33,26 +32,6 @@ export function Dictionary() {
   //     deleteTranslation(id);
   //   }
   // }
-
-  async function addCard(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-
-    const tagalog = (e.target as HTMLFormElement).tagalog.value;
-    const english = (e.target as HTMLFormElement).english.value;
-
-    if (tagalog === "" || english === "") {
-      return;
-    }
-
-    (e.target as HTMLFormElement).tagalog.value = "";
-    (e.target as HTMLFormElement).english.value = "";
-
-    const newTranslation = await createTranslation({ tagalog, english });
-    const newTranslations = [...translations, newTranslation];
-    setTranslations(
-      newTranslations.sort((a, b) => a.tagalog.localeCompare(b.tagalog))
-    );
-  }
 
   // async function onSave(translation: Translation) {
   //   const oldTranslation = translations.find(
@@ -70,17 +49,9 @@ export function Dictionary() {
     <div className={styles.container}>
       <div className={styles.heading}>
         <h1>Dictionary</h1>
-        <button onClick={() => setShowAddCard(true)}>Add Card</button>
+        <Link to="/dictionary/add">Add Card</Link>
       </div>
       <p>{translations.length} translations</p>
-
-      {showAddCard && (
-        <form onSubmit={addCard}>
-          <input type="text" placeholder="Tagalog" name="tagalog" />
-          <input type="text" placeholder="English" name="english" />
-          <button type="submit">Add</button>
-        </form>
-      )}
 
       <div className={styles.table}>
         <DictionaryText left>Tagalog</DictionaryText>
