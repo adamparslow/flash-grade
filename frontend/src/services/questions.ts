@@ -8,5 +8,5 @@ export interface Question {
 }
 
 export async function getQuestions() {
-    return httpFetch("questions", "GET");
+    return httpFetch("questions", "GET") as Promise<Question[]>;
 }
