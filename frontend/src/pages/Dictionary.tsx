@@ -44,7 +44,7 @@ export function Dictionary() {
     <div className={styles.container}>
       <div className={styles.heading}>
         <h1>Dictionary</h1>
-        <Link to="/dictionary/add">Add Card</Link>
+        <Link to="/search">Add Card</Link>
       </div>
       <p>{translations.length} translations</p>
 

@@ -9,6 +9,7 @@ func Router() http.Handler {
 
 	TranslationsHandler(router)
 	QuestionsHandler(router)
+	SearchHandler(router)
 
 	corsRoute := CorsMiddleware(router)
 

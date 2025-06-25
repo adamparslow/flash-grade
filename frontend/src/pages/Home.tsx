@@ -4,7 +4,8 @@ export function Home() {
   return (
     <div className="flex flex-col gap-10 justify-center items-center h-full">
       <HomeLink to="/quiz">Quiz</HomeLink>
-      <HomeLink to="/dictionary">Dictionary</HomeLink>
+      <HomeLink to="/search">Search</HomeLink>
+      <HomeLink to="/dictionary">Vocab List</HomeLink>
     </div>
   );
 }

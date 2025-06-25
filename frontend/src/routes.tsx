@@ -23,7 +23,7 @@ export const routes: RouteObject[] = [
         element: <Quiz />,
       },
       {
-        path: "dictionary/add",
+        path: "search",
         element: <AddTranslation />,
       },
     ],
