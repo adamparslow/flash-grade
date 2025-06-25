@@ -1,10 +1,5 @@
 import { Link } from "react-router-dom";
-import {
-  createTranslation,
-  // deleteTranslation,
-  getTranslations,
-  // updateTranslation,
-} from "../services/translations";
+import { getTranslations } from "../services/translations";
 import styles from "./dictionary.module.css";
 import { useEffect, useState } from "react";
 
