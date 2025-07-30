@@ -1,14 +1,15 @@
 import { Link } from "react-router-dom";
-import styles from "./navigation.module.css";
+import { Button, Stack } from "@mui/material";
+import { ArrowBack } from "@mui/icons-material";
 
 export function Navigation() {
-  console.log(styles);
-
   return (
-    <nav className={styles["nav-bar"]}>
-      <Link className={styles["nav-button"]} to="/">
-        Home
-      </Link>
+    <nav>
+      <Stack direction="row" gap={2} padding={0.5}>
+        <Button component={Link} to="/" variant="contained">
+          <ArrowBack />
+        </Button>
+      </Stack>
     </nav>
   );
 }

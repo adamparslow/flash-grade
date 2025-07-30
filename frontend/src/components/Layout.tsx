@@ -1,19 +1,24 @@
 import { Outlet } from "react-router-dom";
 import { Navigation } from "./Navigation";
 import styles from "./layout.module.css";
+import { Box, Stack } from "@mui/material";
 
 export function Layout() {
   return (
-    <div className={styles.root}>
-      <header className={styles.header}>
-        <Navigation />
+    <Stack height="100vh">
+      <header>
+        <Box width="100%" maxWidth={1200} margin="0 auto">
+          <Navigation />
+        </Box>
       </header>
 
       <main className={styles.main}>
         <Outlet />
       </main>
 
-      <footer className={styles.footer} />
-    </div>
+      <footer>
+        <Box height={3} />
+      </footer>
+    </Stack>
   );
 }

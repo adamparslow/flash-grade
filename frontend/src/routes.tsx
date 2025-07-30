@@ -8,12 +8,12 @@ import { AddTranslation } from "./pages/Dictionary/AddTranslation";
 export const routes: RouteObject[] = [
   {
     path: "/",
+    element: <Home />,
+    index: true,
+  },
+  {
     element: <Layout />,
     children: [
-      {
-        index: true,
-        element: <Home />,
-      },
       {
         path: "dictionary",
         element: <Dictionary />,

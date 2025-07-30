@@ -1,19 +1,34 @@
-import { Link } from "react-router-dom";
+import { Button, Stack, Typography } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 export function Home() {
-  return (
-    <div className="flex flex-col gap-10 justify-center items-center h-full">
-      <HomeLink to="/quiz">Quiz</HomeLink>
-      <HomeLink to="/search">Search</HomeLink>
-      <HomeLink to="/dictionary">Vocab List</HomeLink>
-    </div>
-  );
-}
+  const navigate = useNavigate();
 
-function HomeLink({ to, children }: { to: string; children: React.ReactNode }) {
   return (
-    <Link className="bg-amber-600 p-2 rounded-lg w-1/2 max-w-1/2" to={to}>
-      {children}
-    </Link>
+    <Stack gap={16} padding={2} justifyContent="center" height="100vh">
+      <Typography variant="h3" color="primary">
+        FlashGrade
+      </Typography>
+
+      <Stack gap={4}>
+        <Button onClick={() => navigate("/quiz")} variant="contained" fullWidth>
+          Quiz
+        </Button>
+        <Button
+          onClick={() => navigate("/search")}
+          variant="contained"
+          fullWidth
+        >
+          Search
+        </Button>
+        <Button
+          onClick={() => navigate("/dictionary")}
+          variant="contained"
+          fullWidth
+        >
+          Vocab List
+        </Button>
+      </Stack>
+    </Stack>
   );
 }
