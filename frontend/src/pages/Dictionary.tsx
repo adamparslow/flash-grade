@@ -55,6 +55,7 @@ export function Dictionary() {
           position: "fixed",
           bottom: "40px",
           right: "40px",
+          zIndex: 10,
         }}
         size="large"
       >
@@ -113,54 +114,75 @@ const TranslationCard = ({
   const [touchEnd, setTouchEnd] = useState<number>(0);
 
   return (
-    <Stack
-      alignItems="flex-start"
-      width="100%"
-      onTouchStart={(e) => {
-        setTouchStart(e.targetTouches[0].clientX);
-        console.log("Touch start:", e.targetTouches[0].clientX);
-      }}
-      onTouchMove={(e) => {
-        setTouchEnd(e.targetTouches[0].clientX);
-        console.log("Touch move:", e.targetTouches[0].clientX);
-      }}
-      onTouchEnd={() => {
-        if (touchStart && touchEnd) {
-          const distance = touchStart - touchEnd;
-          console.log(
-            `Swipe distance: ${Math.abs(distance)}px ${
-              distance > 0 ? "left" : "right"
-            }`
-          );
+    <Box position="relative" height="58px" width="100%">
+      <Stack
+        position="absolute"
+        alignItems="flex-start"
+        width="100%"
+        onTouchStart={(e) => {
+          setTouchStart(e.targetTouches[0].clientX);
+          console.log("Touch start:", e.targetTouches[0].clientX);
+        }}
+        onTouchMove={(e) => {
+          setTouchEnd(e.targetTouches[0].clientX);
+          console.log("Touch move:", e.targetTouches[0].clientX);
+        }}
+        onTouchEnd={() => {
+          if (touchStart && touchEnd) {
+            const distance = touchStart - touchEnd;
+            console.log(
+              `Swipe distance: ${Math.abs(distance)}px ${
+                distance > 0 ? "left" : "right"
+              }`
+            );
 
-          // Optional: Trigger actions based on swipe
-          if (Math.abs(distance) > 50) {
-            // 50px threshold
-            if (distance > 0) {
-              console.log("Left swipe detected");
-              // Handle left swipe
-            } else {
-              console.log("Right swipe detected");
-              // Handle right swipe
+            // Optional: Trigger actions based on swipe
+            if (Math.abs(distance) > 50) {
+              // 50px threshold
+              if (distance > 0) {
+                console.log("Left swipe detected");
+                // Handle left swipe
+              } else {
+                console.log("Right swipe detected");
+                // Handle right swipe
+              }
             }
           }
-        }
-      }}
-      sx={{ transform: `translateX(${touchEnd - touchStart}px)` }}
-    >
-      <Typography variant="h6" fontWeight={600}>
-        {language === "tagalog" ? translation.tagalog : translation.english}
-      </Typography>
-      <Typography>
-        {language === "tagalog" ? translation.english : translation.tagalog}
-      </Typography>
 
-      <Box
-        border="solid 1px"
-        borderColor={theme.palette.grey[200]}
+          setTouchStart(0);
+          setTouchEnd(0);
+        }}
+        bgcolor="white"
+        sx={{ transform: `translateX(${touchEnd - touchStart}px)` }}
+      >
+        <Typography variant="h6" fontWeight={600}>
+          {language === "tagalog" ? translation.tagalog : translation.english}
+        </Typography>
+        <Typography>
+          {language === "tagalog" ? translation.english : translation.tagalog}
+        </Typography>
+
+        <Box
+          border="solid 1px"
+          borderColor={theme.palette.grey[200]}
+          width="100%"
+        />
+      </Stack>
+
+      <Stack
+        direction="row"
         width="100%"
-      />
-    </Stack>
+        height="100%"
+        justifyContent="space-between"
+      >
+        <Stack bgcolor="red" flex={1} height="100%" justifyContent="center">
+          <Typography align="left">Delete</Typography>
+        </Stack>
+        <Stack bgcolor="orange" flex={1} height="100%" justifyContent="center">
+          <Typography align="right">Edit</Typography>
+        </Stack>
+      </Stack>
+    </Box>
   );
 };
 
