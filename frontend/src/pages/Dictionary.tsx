@@ -90,29 +90,83 @@ export function Dictionary() {
         </Stack>
       </Stack>
 
-      <Stack alignItems="flex-start" gap={4}>
-        {visibleTranslations.map((card) => {
+      <Stack alignItems="flex-start" gap={4} sx={{ overflowX: "hidden" }}>
+        {visibleTranslations.map((translation) => {
           return (
-            <Stack alignItems="flex-start" width="100%">
-              <Typography variant="h6" fontWeight={600}>
-                {language === "tagalog" ? card.tagalog : card.english}
-              </Typography>
-              <Typography>
-                {language === "tagalog" ? card.english : card.tagalog}
-              </Typography>
-
-              <Box
-                border="solid 1px"
-                borderColor={theme.palette.grey[200]}
-                width="100%"
-              />
-            </Stack>
+            <TranslationCard language={language} translation={translation} />
           );
         })}
       </Stack>
     </Stack>
   );
 }
+
+const TranslationCard = ({
+  language,
+  translation,
+}: {
+  language: string;
+  translation: Translation;
+}) => {
+  const theme = useTheme();
+  const [touchStart, setTouchStart] = useState<number>(0);
+  const [touchEnd, setTouchEnd] = useState<number>(0);
+
+  return (
+    <Stack
+      alignItems="flex-start"
+      width="100%"
+      onTouchStart={(e) => {
+        setTouchStart(e.targetTouches[0].clientX);
+        console.log("Touch start:", e.targetTouches[0].clientX);
+      }}
+      onTouchMove={(e) => {
+        setTouchEnd(e.targetTouches[0].clientX);
+        console.log("Touch move:", e.targetTouches[0].clientX);
+      }}
+      onTouchEnd={(e) => {
+        if (touchStart && touchEnd) {
+          const distance = touchStart - touchEnd;
+          console.log(
+            `Swipe distance: ${Math.abs(distance)}px ${
+              distance > 0 ? "left" : "right"
+            }`
+          );
+
+          // Optional: Trigger actions based on swipe
+          if (Math.abs(distance) > 50) {
+            // 50px threshold
+            if (distance > 0) {
+              console.log("Left swipe detected");
+              // Handle left swipe
+            } else {
+              console.log("Right swipe detected");
+              // Handle right swipe
+            }
+          }
+        }
+
+        // Reset
+        setTouchStart(0);
+        setTouchEnd(0);
+      }}
+      sx={{ transform: `translateX(${touchEnd - touchStart}px)` }}
+    >
+      <Typography variant="h6" fontWeight={600}>
+        {language === "tagalog" ? translation.tagalog : translation.english}
+      </Typography>
+      <Typography>
+        {language === "tagalog" ? translation.english : translation.tagalog}
+      </Typography>
+
+      <Box
+        border="solid 1px"
+        borderColor={theme.palette.grey[200]}
+        width="100%"
+      />
+    </Stack>
+  );
+};
 
 type TabButtonProps = {
   children: React.ReactNode;
