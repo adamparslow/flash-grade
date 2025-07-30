@@ -5,7 +5,7 @@ export function Home() {
   const navigate = useNavigate();
 
   return (
-    <Stack gap={16} padding={2} justifyContent="center" height="100vh">
+    <Stack gap={16} padding={4} justifyContent="center" height="100vh">
       <Typography variant="h3" color="primary">
         FlashGrade
       </Typography>

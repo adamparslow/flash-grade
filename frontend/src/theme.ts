@@ -27,7 +27,35 @@ export const theme = createTheme({
     MuiButton: {
       defaultProps: {
         disableElevation: true
-      }
+      },
+      styleOverrides: {
+        root: {
+          borderRadius: '20px',
+        },
+      },
+    },
+    MuiTextField: {
+      styleOverrides: {
+        root: {
+          // This targets the overall TextField container
+          borderRadius: '40px',
+        },
+      },
+    },
+    MuiOutlinedInput: {
+      styleOverrides: {
+        root: {
+          // This targets the input's border radius
+          borderRadius: '40px',
+        },
+        notchedOutline: {
+          borderRadius: '40px',
+        },
+        input: {
+          // Optional: if you want the input itself to have rounded corners (not always needed)
+          borderRadius: '40px',
+        },
+      },
     },
   },
 });

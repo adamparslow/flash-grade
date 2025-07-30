@@ -1,6 +1,5 @@
 import { Outlet } from "react-router-dom";
 import { Navigation } from "./Navigation";
-import styles from "./layout.module.css";
 import { Box, Stack } from "@mui/material";
 
 export function Layout() {
@@ -12,7 +11,7 @@ export function Layout() {
         </Box>
       </header>
 
-      <main className={styles.main}>
+      <main>
         <Outlet />
       </main>
 
