@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { getTranslations } from "../services/translations";
+import { deleteTranslation, getTranslations } from "../services/translations";
 import { useEffect, useMemo, useState } from "react";
 import {
   Box,
@@ -142,6 +142,7 @@ const TranslationCard = ({
               if (distance > 0) {
                 console.log("Left swipe detected");
                 // Handle left swipe
+                deleteTranslation(translation.id || 0);
               } else {
                 console.log("Right swipe detected");
                 // Handle right swipe
