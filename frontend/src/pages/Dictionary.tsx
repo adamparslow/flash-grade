@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { deleteTranslation, getTranslations } from "../services/translations";
 import { useEffect, useMemo, useState } from "react";
 import {
@@ -109,6 +109,8 @@ const TranslationCard = ({
   language: string;
   translation: Translation;
 }) => {
+  const navigate = useNavigate();
+
   const theme = useTheme();
   const [touchStart, setTouchStart] = useState<number>(0);
   const [touchEnd, setTouchEnd] = useState<number>(0);
@@ -142,10 +144,10 @@ const TranslationCard = ({
               if (distance > 0) {
                 console.log("Left swipe detected");
                 // Handle left swipe
-                deleteTranslation(translation.id || 0);
               } else {
                 console.log("Right swipe detected");
                 // Handle right swipe
+                navigate(`/dictionary/delete/${translation.id}`);
               }
             }
           }

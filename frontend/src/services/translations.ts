@@ -23,5 +23,6 @@ export async function createTranslation(translation: Translation) {
 }
 
 export async function deleteTranslation(id: number) {
+    console.log("delete translation", { id });
     return httpFetch(`translations/${id}`, "DELETE");
 }
