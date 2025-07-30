@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import { deleteTranslation, getTranslations } from "../services/translations";
+import { getTranslations } from "../services/translations";
 import { useEffect, useMemo, useState } from "react";
 import {
   Box,
