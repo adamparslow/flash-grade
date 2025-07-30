@@ -124,7 +124,7 @@ const TranslationCard = ({
         setTouchEnd(e.targetTouches[0].clientX);
         console.log("Touch move:", e.targetTouches[0].clientX);
       }}
-      onTouchEnd={(e) => {
+      onTouchEnd={() => {
         if (touchStart && touchEnd) {
           const distance = touchStart - touchEnd;
           console.log(
@@ -145,10 +145,6 @@ const TranslationCard = ({
             }
           }
         }
-
-        // Reset
-        setTouchStart(0);
-        setTouchEnd(0);
       }}
       sx={{ transform: `translateX(${touchEnd - touchStart}px)` }}
     >
