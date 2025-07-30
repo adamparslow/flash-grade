@@ -9,6 +9,10 @@ export function Quiz() {
   const [loading, setLoading] = useState(true);
 
   function parseWord(word: string) {
+    if (!word) {
+      return word;
+    }
+
     return word
       .trim()
       .split(" ")

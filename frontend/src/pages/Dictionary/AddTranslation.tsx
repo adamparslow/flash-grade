@@ -1,17 +1,37 @@
 import { useNavigate } from "react-router-dom";
-import { createTranslation } from "../../services/translations";
+import {
+  createTranslation,
+  getTranslations,
+} from "../../services/translations";
 import { useState } from "react";
 import { searchTagalog } from "../../services/search";
 import { searchEnglish } from "../../services/search";
-import { Button, Input, Stack, TextField } from "@mui/material";
+import {
+  Button,
+  FormControl,
+  FormControlLabel,
+  Radio,
+  RadioGroup,
+  Stack,
+  TextField,
+  Typography,
+} from "@mui/material";
+import { useTheme } from "@mui/material/styles";
+import type { Translation } from "../Dictionary";
 
 export function AddTranslation() {
+  const theme = useTheme();
+
   const [loading, setLoading] = useState(false);
   const [addCardLoading, setAddCardLoading] = useState(false);
   const [results, setResults] = useState<{
     tagalog: string;
     english: string;
+    isInDictionary: boolean;
   } | null>(null);
+
+  const [language, setLanguage] = useState<"tagalog" | "english">("english");
+  const [searchWord, setSearchWord] = useState("");
   const navigate = useNavigate();
 
   async function addCard() {
@@ -26,76 +46,107 @@ export function AddTranslation() {
     setAddCardLoading(false);
   }
 
-  async function search(e: React.FormEvent<HTMLFormElement>) {
+  async function isWordInDictionary(word: string) {
+    const translations = await getTranslations();
+
+    return translations.some((translation: Translation) => {
+      return translation.tagalog === word || translation.english === word;
+    });
+  }
+
+  async function search() {
     setLoading(true);
-    e.preventDefault();
-    const tagalog = (e.target as HTMLFormElement).tagalog.value;
-    const english = (e.target as HTMLFormElement).english.value;
 
-    console.log(tagalog, english);
-
-    if (tagalog === "" && english === "") {
+    if (searchWord === "") {
       setLoading(false);
       return;
     }
 
-    if (tagalog === "") {
-      const response = await searchEnglish(english);
+    if (language === "english") {
+      const response = await searchEnglish(searchWord);
       console.log(response);
-      setResults({ tagalog: response.result, english });
-    } else if (english === "") {
-      const response = await searchTagalog(tagalog);
+      setResults({
+        tagalog: response.result,
+        english: searchWord,
+        isInDictionary: await isWordInDictionary(response.result),
+      });
+    } else if (language === "tagalog") {
+      const response = await searchTagalog(searchWord);
       console.log(response);
-      setResults({ tagalog, english: response.result });
+      setResults({
+        tagalog: searchWord,
+        english: response.result,
+        isInDictionary: await isWordInDictionary(response.result),
+      });
     }
 
     setLoading(false);
   }
 
   return (
-    <Stack>
-      <form onSubmit={search} className="flex flex-col gap-4 p-10">
-        <div className="flex gap-4 justify-center">
-          <input type="radio" id="tagalog" name="language" />
-          <label htmlFor="tagalog">Tagalog</label>
-          <input type="radio" id="english" name="language" />
-          <label htmlFor="english">English</label>
-        </div>
+    <Stack padding={2} height="100%" gap={8}>
+      <Stack gap={1} width="100%">
         <TextField
-          variant="outlined"
-          size="small"
-          type="text"
-          placeholder="Tagalog"
-          name="tagalog"
+          placeholder="Search"
+          name="search"
+          value={searchWord}
+          onChange={(e) => setSearchWord(e.target.value)}
         />
-        <TextField
-          type="text"
-          placeholder="English"
-          name="english"
-        />
-        <Button
-          type="submit"
-          variant="contained"
-        >
+
+        <FormControl>
+          <RadioGroup
+            defaultValue="English"
+            name="language"
+            onChange={(e) => {
+              setLanguage(e.target.value as "tagalog" | "english");
+            }}
+            value={language}
+            row
+            sx={{ justifyContent: "center" }}
+          >
+            <FormControlLabel
+              value="english"
+              control={<Radio />}
+              label="English"
+            />
+            <FormControlLabel
+              value="tagalog"
+              control={<Radio />}
+              label="Tagalog"
+            />
+          </RadioGroup>
+        </FormControl>
+
+        <Button onClick={search} variant="contained">
           {loading ? "Searching..." : "Search"}
         </Button>
-      </form>
+      </Stack>
 
-      {
-        results && (
-          <div>
-            <h2>Results</h2>
-            <p>{results.tagalog}</p>
-            <p>{results.english}</p>
-            <button
-              onClick={() => addCard()}
-              className="bg-gray-300 rounded-md p-2 cursor-pointer"
+      {results && (
+        <Stack
+          gap={1.5}
+          bgcolor={theme.palette.secondary.main}
+          borderRadius={4}
+          padding={2}
+          alignItems="flex-start"
+        >
+          <Typography variant="h5">Results</Typography>
+          <Typography>Tagalog: {results.tagalog}</Typography>
+          <Typography>English: {results.english}</Typography>
+          {results.isInDictionary ? (
+            <Typography>This word is already in the dictionary</Typography>
+          ) : (
+            <Button
+              onClick={addCard}
+              color="success"
+              variant="contained"
+              fullWidth
             >
               {addCardLoading ? "Adding..." : "Add to vocab list?"}
-            </button>
-          </div>
-        )
-      }
-    </Stack >
+            </Button>
+          )}
+        </Stack>
+      )}
+    </Stack>
   );
 }
