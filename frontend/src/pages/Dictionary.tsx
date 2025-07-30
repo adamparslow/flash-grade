@@ -3,13 +3,9 @@ import { getTranslations } from "../services/translations";
 import { useEffect, useMemo, useState } from "react";
 import {
   Box,
-  FormControlLabel,
-  FormControl,
-  RadioGroup,
   Stack,
   Typography,
   useTheme,
-  Radio,
   IconButton,
   TextField,
   Button,
@@ -27,7 +23,7 @@ export function Dictionary() {
 
   const [translations, setTranslations] = useState<Translation[]>([]);
   const [language, setLanguage] = useState<"tagalog" | "english">("tagalog");
-  const [loading, setLoading] = useState(false);
+  const [_, setLoading] = useState(false);
   const [searchWord, setSearchWord] = useState<string>("");
 
   useEffect(() => {
