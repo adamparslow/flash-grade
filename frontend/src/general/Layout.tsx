@@ -1,8 +1,10 @@
-import { Link, Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import { Box, IconButton, Stack, Typography } from "@mui/material";
 import { ArrowBack } from "@mui/icons-material";
 
 export function Layout() {
+  const navigate = useNavigate();
+
   return (
     <Stack height="100vh">
       <header>
@@ -15,7 +17,7 @@ export function Layout() {
               alignItems="center"
               justifyContent="space-between"
             >
-              <IconButton component={Link} to="/">
+              <IconButton onClick={() => navigate(-1)}>
                 <ArrowBack fontSize="large" />
               </IconButton>
 

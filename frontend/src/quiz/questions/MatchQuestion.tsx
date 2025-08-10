@@ -32,6 +32,15 @@ export function MatchQuestion({ question, onNext }: QuestionProps) {
       return;
     }
 
+    if (selectedButton[0] === columnIndex) {
+      changeMatrixStates([
+        [selectedButton[0], selectedButton[1], "default"],
+        [columnIndex, row, "selected"],
+      ])
+      setSelectedButton([columnIndex, row]);
+      return;
+    }
+
     const getTranslation = (column: number, row: number) => {
       return column === 0 ? leftButtons[row] : rightButtons[row];
     }
@@ -103,8 +112,10 @@ function QuestionButton({ children, state, onClick }: { children: React.ReactNod
   return <Button
     variant="contained"
     color={buttonColor[state]}
-    onClick={onClick}
+    onClick={() => {
+      if (state === "default") onClick()
+    }}
   >
     {children}
-  </Button>
+  </Button >
 }
