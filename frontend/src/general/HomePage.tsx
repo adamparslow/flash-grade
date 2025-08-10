@@ -1,7 +1,7 @@
 import { Button, Stack, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
-export function Home() {
+export function HomePage() {
   const navigate = useNavigate();
 
   return (

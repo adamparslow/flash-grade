@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import { getTranslations } from "../services/translations";
+import { getTranslations } from "./translationsApi";
 import { useEffect, useMemo, useState } from "react";
 import {
   Box,
@@ -18,7 +18,7 @@ export type Translation = {
   english: string;
 };
 
-export function Dictionary() {
+export function DictionaryPage() {
   const theme = useTheme();
 
   const [translations, setTranslations] = useState<Translation[]>([]);

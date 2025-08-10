@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { QuestionProps } from "../../pages/Quiz";
+import type { QuestionProps } from "../QuizPage";
 
 export function SingleQuestion({ question, onNext }: QuestionProps) {
   const [answer, setAnswer] = useState("");

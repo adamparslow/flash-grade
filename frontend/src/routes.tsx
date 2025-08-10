@@ -1,15 +1,15 @@
 import type { RouteObject } from "react-router-dom";
-import { Home } from "./pages/Home";
-import { Dictionary } from "./pages/Dictionary";
-import { Layout } from "./components/Layout";
-import { Quiz } from "./pages/Quiz";
-import { AddTranslation } from "./pages/Dictionary/AddTranslation";
-import { DeleteTranslation } from "./pages/Dictionary/DeleteTranslation";
+import { HomePage } from "./general/HomePage";
+import { DictionaryPage } from "./vocabList/DictionaryPage";
+import { Layout } from "./general/Layout";
+import { QuizPage } from "./quiz/QuizPage";
+import { AddTranslationPage } from "./vocabList/AddTranslationPage";
+import { DeleteTranslationPage } from "./vocabList/DeleteTranslationPage";
 
 export const routes: RouteObject[] = [
   {
     path: "/",
-    element: <Home />,
+    element: <HomePage />,
     index: true,
   },
   {
@@ -17,19 +17,19 @@ export const routes: RouteObject[] = [
     children: [
       {
         path: "dictionary",
-        element: <Dictionary />,
+        element: <DictionaryPage />,
       },
       {
         path: "quiz",
-        element: <Quiz />,
+        element: <QuizPage />,
       },
       {
         path: "search",
-        element: <AddTranslation />,
+        element: <AddTranslationPage />,
       },
       {
         path: "dictionary/delete/:id",
-        element: <DeleteTranslation />,
+        element: <DeleteTranslationPage />,
       },
     ],
   },

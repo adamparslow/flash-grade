@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import type { QuestionProps } from "../../pages/Quiz";
+import type { QuestionProps } from "../QuizPage";
 
 export function MatchQuestion({ question, onNext }: QuestionProps) {
   // Randomise the list using a simple Fisher-Yates shuffle

@@ -1,13 +1,13 @@
 import { Button, Stack, Typography } from "@mui/material";
-import type { Translation } from "../Dictionary";
+import type { Translation } from "./DictionaryPage";
 import { Link, useParams } from "react-router";
 import {
   deleteTranslation,
   getTranslations,
-} from "../../services/translations";
+} from "./translationsApi";
 import { useEffect, useState } from "react";
 
-export const DeleteTranslation = () => {
+export const DeleteTranslationPage = () => {
   const { id: idStr } = useParams<{ id: string }>();
   const id = parseInt(idStr || "0");
   const [translation, setTranslation] = useState<Translation | undefined>();

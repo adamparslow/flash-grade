@@ -1,4 +1,4 @@
-import { httpFetch } from "./helper";
+import { httpFetch } from "../general/http";
 
 export async function searchEnglish(english: string) {
     const response = await httpFetch(`search?english=${english}`, "GET");

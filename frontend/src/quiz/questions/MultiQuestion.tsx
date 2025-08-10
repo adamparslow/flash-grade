@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { QuestionProps } from "../../pages/Quiz";
+import type { QuestionProps } from "../QuizPage";
 
 export function MultiQuestion({ question, onNext }: QuestionProps) {
   const [answered, setAnswered] = useState(false);

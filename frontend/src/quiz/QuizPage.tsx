@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { getQuestions, type Question } from "../services/questions";
-import { MultiQuestion } from "../components/questions/MultiQuestion";
-import { MatchQuestion } from "../components/questions/MatchQuestion";
-import { SingleQuestion } from "../components/questions/SingleQuestion";
+import { getQuestions, type Question } from "./questions";
+import { MultiQuestion } from "./questions/MultiQuestion";
+import { MatchQuestion } from "./questions/MatchQuestion";
+import { SingleQuestion } from "./questions/SingleQuestion";
 
-export function Quiz() {
+export function QuizPage() {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [loading, setLoading] = useState(true);
 

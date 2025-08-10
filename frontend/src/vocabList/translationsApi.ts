@@ -1,5 +1,5 @@
-import type { Translation } from "../pages/Dictionary";
-import { httpFetch } from "./helper";
+import type { Translation } from "./DictionaryPage";
+import { httpFetch } from "../general/http";
 
 const captialise = (word: string) => {
     if (word.length <= 1) {

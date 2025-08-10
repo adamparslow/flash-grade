@@ -1,5 +1,5 @@
-import type { Translation } from "../pages/Dictionary";
-import { httpFetch } from "./helper";
+import type { Translation } from "../vocabList/DictionaryPage";
+import { httpFetch } from "../general/http";
 
 export interface Question {
     translations: Translation[];

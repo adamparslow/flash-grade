@@ -2,10 +2,9 @@ import { useNavigate } from "react-router-dom";
 import {
   createTranslation,
   getTranslations,
-} from "../../services/translations";
+} from "./translationsApi";
 import { useState } from "react";
-import { searchTagalog } from "../../services/search";
-import { searchEnglish } from "../../services/search";
+import { searchTagalog, searchEnglish } from "./searchApi";
 import {
   Button,
   FormControl,
@@ -17,9 +16,9 @@ import {
   Typography,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-import type { Translation } from "../Dictionary";
+import type { Translation } from "./DictionaryPage";
 
-export function AddTranslation() {
+export function AddTranslationPage() {
   const theme = useTheme();
 
   const [loading, setLoading] = useState(false);
