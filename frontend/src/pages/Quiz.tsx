@@ -37,7 +37,7 @@ export function Quiz() {
 
   useEffect(() => {
     getQuestions().then((data) => {
-      setQuestions(data.map(parseQuestion));
+      setQuestions(data.map(parseQuestion).filter(q => q.type === "MATCH"));
       setLoading(false);
     });
   }, []);

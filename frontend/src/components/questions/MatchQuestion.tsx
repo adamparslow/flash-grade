@@ -1,7 +1,13 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import type { QuestionProps } from "../../pages/Quiz";
 
 export function MatchQuestion({ question, onNext }: QuestionProps) {
+  // Randomise the list using a simple Fisher-Yates shuffle
+  const leftButtons = useMemo(() => question.translations
+    .map(t => ({ ...t }))
+    .sort(() => Math.random() - 0.5), [question]);
+  const rightButtons = useMemo(() => question.translations.map(t => ({ ...t })).sort(() => Math.random() - 0.5), []);
+
   const [selectedLeft, setSelectedLeft] = useState<number | null>(null);
   const [selectedRight, setSelectedRight] = useState<number | null>(null);
 
@@ -11,15 +17,15 @@ export function MatchQuestion({ question, onNext }: QuestionProps) {
     <div className="flex flex-col gap-5 h-full p-5">
       <div className="flex gap-5 h-full p-5">
         <div className="flex flex-col justify-stretch flex-1 gap-2">
-          {question.translations.map((translation) => (
+          {leftButtons.map((translation) => (
             <MatchQuestionButton
               key={`left${translation.id}`}
               correct={correctId.includes(translation.id || 0)}
               show={
                 Boolean(
                   selectedLeft &&
-                    selectedRight &&
-                    selectedLeft === translation.id
+                  selectedRight &&
+                  selectedLeft === translation.id
                 ) || correctId.includes(translation.id || 0)
               }
               onClick={() => {
@@ -40,15 +46,15 @@ export function MatchQuestion({ question, onNext }: QuestionProps) {
           ))}
         </div>
         <div className="flex flex-col flex-1 gap-2">
-          {question.translations.map((translation) => (
+          {rightButtons.map((translation) => (
             <MatchQuestionButton
               key={`right${translation.id}`}
               correct={correctId.includes(translation.id || 0)}
               show={
                 Boolean(
                   selectedLeft &&
-                    selectedRight &&
-                    selectedRight === translation.id
+                  selectedRight &&
+                  selectedRight === translation.id
                 ) || correctId.includes(translation.id || 0)
               }
               onClick={() => {
@@ -97,13 +103,12 @@ function MatchQuestionButton({
   return (
     <button
       onClick={onClick}
-      className={`${
-        correct && show
+      className={`${correct && show
           ? "bg-green-600 text-white"
           : !correct && show
-          ? "bg-red-700 text-white"
-          : "bg-gray-200 text-black"
-      } p-2 rounded-md hover:bg-gray-400 cursor-pointer focus:bg-blue-600 focus:text-white`}
+            ? "bg-red-700 text-white"
+            : "bg-gray-200 text-black"
+        } p-2 rounded-md hover:bg-gray-400 cursor-pointer focus:bg-blue-600 focus:text-white`}
       disabled={disabled}
     >
       {children}
