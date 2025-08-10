@@ -15,13 +15,6 @@ export function HomePage() {
           Quiz
         </Button>
         <Button
-          onClick={() => navigate("/search")}
-          variant="contained"
-          fullWidth
-        >
-          Search
-        </Button>
-        <Button
           onClick={() => navigate("/dictionary")}
           variant="contained"
           fullWidth

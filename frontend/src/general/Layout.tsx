@@ -29,7 +29,7 @@ export function Layout() {
         </Box>
       </header>
 
-      <main>
+      <main style={{ flex: 1 }}>
         <Outlet />
       </main>
 

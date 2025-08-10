@@ -49,7 +49,7 @@ export function DictionaryPage() {
     <Stack padding={4} gap={8}>
       <IconButton
         component={Link}
-        to="/search"
+        to="/dictionary/add"
         sx={{
           backgroundColor: theme.palette.primary.main,
           position: "fixed",

@@ -24,20 +24,21 @@ export function QuizPage() {
       .join(" ");
   }
 
-  function parseQuestion(question: Question) {
-    return {
-      ...question,
-      translations: question.translations.map((t) => ({
-        ...t,
-        tagalog: parseWord(t.tagalog),
-        english: parseWord(t.english),
-      })),
-    };
-  }
 
   useEffect(() => {
+    function parseQuestion(question: Question) {
+      return {
+        ...question,
+        translations: question.translations.map((t) => ({
+          ...t,
+          tagalog: parseWord(t.tagalog),
+          english: parseWord(t.english),
+        })),
+      };
+    }
+
     getQuestions().then((data) => {
-      setQuestions(data.map(parseQuestion).filter(q => q.type === "MATCH"));
+      setQuestions(data.map(parseQuestion));
       setLoading(false);
     });
   }, []);

@@ -1,117 +1,110 @@
 import { useMemo, useState } from "react";
 import type { QuestionProps } from "../QuizPage";
+import { Button, Stack } from "@mui/material";
+
+type ButtonState = "default" | "success" | "fail" | "selected";
 
 export function MatchQuestion({ question, onNext }: QuestionProps) {
-  // Randomise the list using a simple Fisher-Yates shuffle
   const leftButtons = useMemo(() => question.translations
     .map(t => ({ ...t }))
     .sort(() => Math.random() - 0.5), [question]);
-  const rightButtons = useMemo(() => question.translations.map(t => ({ ...t })).sort(() => Math.random() - 0.5), []);
+  const rightButtons = useMemo(() => question.translations.map(t => ({ ...t })).sort(() => Math.random() - 0.5), [question]);
 
-  const [selectedLeft, setSelectedLeft] = useState<number | null>(null);
-  const [selectedRight, setSelectedRight] = useState<number | null>(null);
+  const [buttonStateMatrix, setButtonStateMatrix] = useState<ButtonState[][]>([["default", "default", "default", "default"], ["default", "default", "default", "default"]]);
+  const [selectedButton, setSelectedButton] = useState<number[] | null>(null);
 
-  const [correctId, setCorrectId] = useState<number[]>([]);
+  const changeMatrixStates = (updates: Array<[number, number, ButtonState]>) => {
+    setButtonStateMatrix(prev => {
+      const next = prev.map(r => [...r]);
+      for (const [c, r, s] of updates) next[c][r] = s;
+      return next;
+    });
+  };
+
+  const handleButtonClick = (column: "left" | "right", row: number) => {
+    const columnIndex = column === "left" ? 0 : 1;
+
+    if (selectedButton === null) {
+      setSelectedButton([columnIndex, row]);
+      changeMatrixStates([
+        [columnIndex, row, "selected"],
+      ])
+      return;
+    }
+
+    const getTranslation = (column: number, row: number) => {
+      return column === 0 ? leftButtons[row] : rightButtons[row];
+    }
+
+    const currSelectedTranslation = getTranslation(selectedButton[0], selectedButton[1]);
+    const currTranslation = getTranslation(columnIndex, row);
+
+    if (currSelectedTranslation.id === currTranslation.id) {
+      changeMatrixStates([
+        [selectedButton[0], selectedButton[1], "success"],
+        [columnIndex, row, "success"],
+      ])
+      setSelectedButton(null);
+    } else {
+      changeMatrixStates([
+        [selectedButton[0], selectedButton[1], "fail"],
+        [columnIndex, row, "fail"],
+      ])
+      setSelectedButton(null);
+
+      setTimeout(() => {
+        changeMatrixStates([
+          [selectedButton[0], selectedButton[1], "default"],
+          [columnIndex, row, "default"],
+        ])
+      }, 1000)
+    }
+  };
 
   return (
-    <div className="flex flex-col gap-5 h-full p-5">
-      <div className="flex gap-5 h-full p-5">
-        <div className="flex flex-col justify-stretch flex-1 gap-2">
-          {leftButtons.map((translation) => (
-            <MatchQuestionButton
-              key={`left${translation.id}`}
-              correct={correctId.includes(translation.id || 0)}
-              show={
-                Boolean(
-                  selectedLeft &&
-                  selectedRight &&
-                  selectedLeft === translation.id
-                ) || correctId.includes(translation.id || 0)
-              }
-              onClick={() => {
-                if (selectedRight && selectedLeft) {
-                  setSelectedLeft(translation.id || 0);
-                  setSelectedRight(null);
-                  return;
-                }
-                setSelectedLeft(translation.id || 0);
-                if (selectedRight === translation.id) {
-                  setCorrectId([...correctId, translation.id || 0]);
-                }
-              }}
-              disabled={correctId.includes(translation.id || 0)}
-            >
+    <Stack height="100%" padding={2}>
+      <Stack direction="row" flex={1} gap={2}>
+        <Stack flex={1} justifyContent="space-evenly" height="100%">
+          {leftButtons.map((translation, index) => (
+            <QuestionButton state={buttonStateMatrix[0][index]} onClick={() => handleButtonClick("left", index)}>
               {translation.english}
-            </MatchQuestionButton>
+            </QuestionButton>
           ))}
-        </div>
-        <div className="flex flex-col flex-1 gap-2">
-          {rightButtons.map((translation) => (
-            <MatchQuestionButton
-              key={`right${translation.id}`}
-              correct={correctId.includes(translation.id || 0)}
-              show={
-                Boolean(
-                  selectedLeft &&
-                  selectedRight &&
-                  selectedRight === translation.id
-                ) || correctId.includes(translation.id || 0)
-              }
-              onClick={() => {
-                if (selectedRight && selectedLeft) {
-                  setSelectedLeft(null);
-                  setSelectedRight(translation.id || 0);
-                  return;
-                }
-                setSelectedRight(translation.id || 0);
-                if (selectedLeft === translation.id) {
-                  setCorrectId([...correctId, translation.id || 0]);
-                }
-              }}
-              disabled={correctId.includes(translation.id || 0)}
-            >
+        </Stack>
+        <Stack flex={1} justifyContent="space-evenly" height="100%">
+          {rightButtons.map((translation, index) => (
+            <QuestionButton state={buttonStateMatrix[1][index]} onClick={() => handleButtonClick("right", index)}>
               {translation.tagalog}
-            </MatchQuestionButton>
+            </QuestionButton>
           ))}
-        </div>
-      </div>
-      <button
-        onClick={() => {
-          onNext();
-        }}
-        className="bg-gray-300 text-white p-2 rounded-md hover:bg-gray-600 cursor-pointer"
-      >
-        Next
-      </button>
-    </div>
+        </Stack>
+      </Stack>
+
+      <Stack flex={1} paddingTop={2}>
+        <Button
+          onClick={onNext}
+          variant="contained"
+        >
+          Next
+        </Button>
+      </Stack>
+    </Stack>
   );
 }
 
-function MatchQuestionButton({
-  children,
-  onClick,
-  correct,
-  show,
-  disabled,
-}: {
-  children: React.ReactNode;
-  onClick: () => void;
-  correct?: boolean;
-  show?: boolean;
-  disabled?: boolean;
-}) {
-  return (
-    <button
-      onClick={onClick}
-      className={`${correct && show
-          ? "bg-green-600 text-white"
-          : !correct && show
-            ? "bg-red-700 text-white"
-            : "bg-gray-200 text-black"
-        } p-2 rounded-md hover:bg-gray-400 cursor-pointer focus:bg-blue-600 focus:text-white`}
-      disabled={disabled}
-    >
-      {children}
-    </button>
-  );
+const buttonColor: Record<ButtonState, "info" | "error" | "success" | "primary"> = {
+  "default": "info",
+  "fail": "error",
+  "success": "success",
+  "selected": "primary"
+}
+
+function QuestionButton({ children, state, onClick }: { children: React.ReactNode, state: ButtonState, onClick: () => void }) {
+  return <Button
+    variant="contained"
+    color={buttonColor[state]}
+    onClick={onClick}
+  >
+    {children}
+  </Button>
 }

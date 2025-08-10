@@ -24,7 +24,7 @@ export const routes: RouteObject[] = [
         element: <QuizPage />,
       },
       {
-        path: "search",
+        path: "dictionary/add",
         element: <AddTranslationPage />,
       },
       {
