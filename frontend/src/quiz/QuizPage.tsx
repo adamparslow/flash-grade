@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getQuestions, type Question } from "./questions";
+import { getQuestions, type Question } from "./questionsApi";
 import { MultiQuestion } from "./questions/MultiQuestion";
 import { MatchQuestion } from "./questions/MatchQuestion";
 import { SingleQuestion } from "./questions/SingleQuestion";
