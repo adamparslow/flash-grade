@@ -1,4 +1,4 @@
-package handlers
+package quiz 
 
 import (
 	"backend/db"
@@ -8,8 +8,9 @@ import (
 	"net/http"
 )
 
-func QuestionsHandler(mux *http.ServeMux) {
+func QuizHandler(mux *http.ServeMux) {
 	mux.HandleFunc("GET /api/questions", getQuestions)
+	mux.HandleFunc("POST /api/answers", postAnswers)
 }
 
 func getQuestions(w http.ResponseWriter, r *http.Request) {
@@ -105,4 +106,23 @@ func randomiseTranslations(arr []entities.Translation) []entities.Translation {
 
 func isEnglishQuestion() bool {
 	return rand.Intn(2) == 0
+}
+
+func postAnswers(w http.ResponseWriter, r *http.Request) {
+	var answers []Answer 
+
+	decoder := json.NewDecoder(r.Body)
+	if err := decoder.Decode(&answers); err != nil {
+		http.Error(w, "Invalid request body: "+err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	for _, ans := range answers {
+		if ans.TranslationId == "" {
+			http.Error(w, "Missing translationId in one or more answers", http.StatusBadRequest)
+			return
+		}
+	}
+
+	storeAnswers(answers)
 }

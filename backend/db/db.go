@@ -37,6 +37,10 @@ func initDB() {
 	fmt.Println("Connected to the database.")
 }
 
+func GetDB() *sql.DB {
+	return db
+}
+
 func GetTranslationsFromDB() ([]entities.Translation, error) {
 	rows, err := db.Query("SELECT id, tagalog, english FROM translations ORDER BY tagalog ASC")
 
