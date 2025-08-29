@@ -6,11 +6,14 @@ import (
 	"encoding/json"
 	"math/rand"
 	"net/http"
+	"time"
+	"fmt"
 )
 
 func QuizHandler(mux *http.ServeMux) {
 	mux.HandleFunc("GET /api/questions", getQuestions)
 	mux.HandleFunc("POST /api/answers", postAnswers)
+	mux.HandleFunc("GET /api/streak", getStreakStatus)
 }
 
 func getQuestions(w http.ResponseWriter, r *http.Request) {
@@ -125,4 +128,50 @@ func postAnswers(w http.ResponseWriter, r *http.Request) {
 	}
 
 	storeAnswers(answers)
+}
+
+func getStreakStatus(w http.ResponseWriter, r *http.Request) {
+	dates := getActiveDates()
+	var previous time.Time = dates[0]
+	var streak int = 0
+	var freezeCount int = 0
+	var freeze int = 0
+
+	for _, date := range dates[1:] {
+		fmt.Println(date.Sub(previous).Hours())
+
+		daysDifference := date.Sub(previous).Hours() / 24
+
+		if (daysDifference == 1) {
+			streak++
+			freezeCount++
+		} else {
+			differenceMinusFreeze := daysDifference - freeze
+
+			if (differenceMinusFreeze < 0) {
+				freeze = 0
+				streak = 0
+				freezeCount = 0
+			}
+
+			if (freeze > 0) {
+				freeze--
+			} else {
+				streak = 0
+				freezeCount = 0
+			}
+		}
+
+		if (freezeCount == 5 && freeze < 2) {
+			freezeCount = 0
+			freeze++
+		}
+
+		previous = date
+	}
+
+	json.NewEncoder(w).Encode(map[string]interface{}{
+		"streak": streak,
+		"freeze": freeze,
+	})
 }

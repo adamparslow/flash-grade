@@ -3,6 +3,7 @@ package quiz
 import (
 	"backend/db"
 	"log"
+	"time"
 )
 
 func storeAnswers(answers []Answer) {
@@ -27,4 +28,31 @@ func CreateAnswersTable() {
 	if err != nil {
 		log.Fatal(err)
 	}
+}
+
+func getActiveDates() []time.Time {
+	dbClient := db.GetDB()
+
+	rows, err := dbClient.Query("SELECT DISTINCT date FROM answers ORDER BY date ASC")
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	defer rows.Close()
+
+	dates := []time.Time{}
+
+	for rows.Next() {
+		var date time.Time
+		err := rows.Scan(&date)
+
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		dates = append(dates, date)
+	}
+
+	return dates
 }
