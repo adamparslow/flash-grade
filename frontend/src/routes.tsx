@@ -5,6 +5,7 @@ import { Layout } from "./general/Layout";
 import { QuizPage } from "./quiz/QuizPage";
 import { AddTranslationPage } from "./vocabList/AddTranslationPage";
 import { DeleteTranslationPage } from "./vocabList/DeleteTranslationPage";
+import { SentencesPage } from "./sentences/SentencesPage";
 
 export const routes: RouteObject[] = [
   {
@@ -30,6 +31,10 @@ export const routes: RouteObject[] = [
       {
         path: "dictionary/delete/:id",
         element: <DeleteTranslationPage />,
+      },
+      {
+        path: "sentences",
+        element: <SentencesPage />,
       },
     ],
   },

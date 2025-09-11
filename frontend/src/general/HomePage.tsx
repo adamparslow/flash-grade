@@ -21,6 +21,13 @@ export function HomePage() {
         >
           Vocab List
         </Button>
+        <Button
+          onClick={() => navigate("/sentences")}
+          variant="contained"
+          fullWidth
+        >
+          Sentences
+        </Button>
       </Stack>
     </Stack>
   );

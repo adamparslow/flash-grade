@@ -1,13 +1,13 @@
-package quiz 
+package quiz
 
 import (
 	"backend/db"
 	"backend/entities"
 	"encoding/json"
+	"fmt"
 	"math/rand"
 	"net/http"
 	"time"
-	"fmt"
 )
 
 func QuizHandler(mux *http.ServeMux) {
@@ -112,7 +112,7 @@ func isEnglishQuestion() bool {
 }
 
 func postAnswers(w http.ResponseWriter, r *http.Request) {
-	var answers []Answer 
+	var answers []Answer
 
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&answers); err != nil {
@@ -142,19 +142,19 @@ func getStreakStatus(w http.ResponseWriter, r *http.Request) {
 
 		daysDifference := date.Sub(previous).Hours() / 24
 
-		if (daysDifference == 1) {
+		if daysDifference == 1 {
 			streak++
 			freezeCount++
 		} else {
-			differenceMinusFreeze := daysDifference - freeze
+			differenceMinusFreeze := daysDifference - float64(freeze)
 
-			if (differenceMinusFreeze < 0) {
+			if differenceMinusFreeze < 0 {
 				freeze = 0
 				streak = 0
 				freezeCount = 0
 			}
 
-			if (freeze > 0) {
+			if freeze > 0 {
 				freeze--
 			} else {
 				streak = 0
@@ -162,7 +162,7 @@ func getStreakStatus(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 
-		if (freezeCount == 5 && freeze < 2) {
+		if freezeCount == 5 && freeze < 2 {
 			freezeCount = 0
 			freeze++
 		}
