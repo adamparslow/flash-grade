@@ -2,16 +2,17 @@ package quiz
 
 import (
 	"backend/db"
+	"backend/entities"
 	"log"
 	"time"
 )
 
-func storeAnswers(answers []Answer) {
+func storeAnswers(answers []entities.Answer) {
 	dbClient := db.GetDB()
 
 	for _, answer := range answers {
 		_, err := dbClient.Exec(
-			"INSERT INTO answers (translation_id, correct, wrong, date) VALUES ($1, $2, $3, $4)", 
+			"INSERT INTO answers (translation_id, correct, wrong, date) VALUES ($1, $2, $3, $4)",
 			answer.TranslationId, answer.Correct, answer.Wrong, answer.Date)
 
 		if err != nil {

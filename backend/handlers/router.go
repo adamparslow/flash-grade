@@ -1,14 +1,15 @@
 package handlers
 
 import (
-	"net/http"
 	"backend/quiz"
+	"backend/translations"
+	"net/http"
 )
 
 func Router() http.Handler {
 	router := http.NewServeMux()
 
-	TranslationsHandler(router)
+	translations.TranslationsHandler(router)
 	quiz.QuizHandler(router)
 	SearchHandler(router)
 

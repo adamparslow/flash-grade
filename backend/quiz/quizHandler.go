@@ -112,7 +112,7 @@ func isEnglishQuestion() bool {
 }
 
 func postAnswers(w http.ResponseWriter, r *http.Request) {
-	var answers []Answer
+	var answers []entities.Answer
 
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&answers); err != nil {
