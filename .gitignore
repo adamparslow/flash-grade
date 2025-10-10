@@ -6,7 +6,7 @@ frontend/build
 backend/server
 backend/tmp
 backend/backend
-backend/data/data.db
+backend/data.db
 
 # Misc
 .env
