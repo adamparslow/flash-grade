@@ -52,7 +52,7 @@ func initSqliteDB() {
 	}
 
 	// SQLite doesn't need Ping to verify remote connectivity, but it's still safe to check
-	err = db.Ping()
+	// err = db.Ping()
 	if err != nil {
 		log.Fatal("Cannot connect to the database:", err)
 	}
