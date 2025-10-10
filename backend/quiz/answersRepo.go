@@ -21,6 +21,34 @@ func storeAnswers(answers []entities.Answer) {
 	}
 }
 
+func GetAnswersFromDB() ([]entities.Answer, error) {
+	dbClient := db.GetDB()
+
+	rows, err := dbClient.Query("SELECT id, translation_id, correct, wrong, date FROM translations ORDER BY tagalog ASC")
+
+	if err != nil {
+		return nil, err
+	}
+
+	var answers []entities.Answer
+	defer rows.Close()
+
+	for rows.Next() {
+		var answer entities.Answer
+		err := rows.Scan(&answer.ID, &answer.TranslationId, &answer.Correct, &answer.Wrong, &answer.Date)
+		if err != nil {
+			return nil, err
+		}
+		answers = append(answers, answer)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return answers, nil
+}
+
 func CreateAnswersTable() {
 	dbClient := db.GetDB()
 

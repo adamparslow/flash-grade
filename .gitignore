@@ -5,6 +5,8 @@ frontend/build
 # Go
 backend/server
 backend/tmp
+backend/backend
+backend/data.db
 
 # Misc
 .env
