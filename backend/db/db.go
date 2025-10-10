@@ -43,7 +43,7 @@ func initDB() {
 }
 
 func initSqliteDB() {
-	dbPath := "data/data.db" // You can change this to whatever path you want
+	dbPath := "/data/data.db" // You can change this to whatever path you want
 	var err error
 
 	sqliteDb, err = sql.Open("sqlite3", dbPath)
