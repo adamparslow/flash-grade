@@ -124,7 +124,7 @@ func migrateToSqlite() {
 }
 
 func GetDB() *sql.DB {
-	return db
+	return sqliteDb
 }
 
 func GetAnswersFromDB() ([]entities.Answer, error) {
@@ -154,7 +154,8 @@ func GetAnswersFromDB() ([]entities.Answer, error) {
 }
 
 func GetTranslationsFromDB() ([]entities.Translation, error) {
-	rows, err := db.Query("SELECT id, tagalog, english FROM translations ORDER BY tagalog ASC")
+	dbClient := GetDB()
+	rows, err := dbClient.Query("SELECT id, tagalog, english FROM translations ORDER BY tagalog ASC")
 
 	if err != nil {
 		return nil, err
@@ -180,22 +181,34 @@ func GetTranslationsFromDB() ([]entities.Translation, error) {
 }
 
 func UpdateTranslationInDB(translation entities.Translation) error {
-	_, err := db.Exec("UPDATE translations SET tagalog = $1, english = $2 WHERE id = $3", translation.Tagalog, translation.English, translation.ID)
+	dbClient := GetDB()
+	_, err := dbClient.Exec("UPDATE translations SET tagalog = $1, english = $2 WHERE id = $3", translation.Tagalog, translation.English, translation.ID)
 	return err
 }
 
 func CreateTranslationInDB(translation entities.Translation) (int64, error) {
+	dbClient := GetDB()
 	var id int64
 
-	err := db.QueryRow("INSERT INTO translations (tagalog, english) VALUES ($1, $2) RETURNING id", translation.Tagalog, translation.English).Scan(&id)
+	res, err := dbClient.Exec(
+		"INSERT INTO translations (tagalog, english) VALUES (?, ?)",
+		translation.Tagalog,
+		translation.English,
+	)
 	if err != nil {
 		return 0, err
 	}
 
-	return id, err
+	id, err = res.LastInsertId()
+	if err != nil {
+		return 0, err
+	}
+
+	return id, nil
 }
 
 func DeleteTranslationInDB(id int64) error {
-	_, err := db.Exec("DELETE FROM translations WHERE id = $1", id)
+	dbClient := GetDB()
+	_, err := dbClient.Exec("DELETE FROM translations WHERE id = $1", id)
 	return err
 }
