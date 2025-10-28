@@ -1,4 +1,4 @@
-import { Button, Stack, TextareaAutosize, Typography } from "@mui/material";
+import { Box, Button, Stack, TextareaAutosize, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { getTranslations } from "../vocabList/translationsApi";
 import type { Translation } from "../vocabList/DictionaryPage";
@@ -16,7 +16,6 @@ const PROMPT_KEY = "sentencesPrompt";
 export function SentencesPage() {
   const [translations, setTranslations] = useState<Translation[]>([]);
   const [loading, setLoading] = useState(false);
-  const [prompt, setPrompt] = useLocalStorage(PROMPT_KEY, DEFAULT_PROMPT);
 
   useEffect(() => {
     setLoading(true);
@@ -26,12 +25,26 @@ export function SentencesPage() {
     });
   }, []);
 
-  function openChatGPT() {
-    const words = translations
-      .map((translation) => translation.tagalog)
-      .join(", ");
+  function kRandomWords(array: string[], k: number) {
+    for (let i = array.length - 1; i > 0; i--) {
+      // Generate a random index from 0 to i
+      const j = Math.floor(Math.random() * (i + 1));
 
-    navigator.clipboard.writeText(prompt + "\n" + words);
+      // Swap elements at indices i and j
+      const temp = array[i];
+      array[i] = array[j];
+      array[j] = temp;
+    }
+    return array.slice(0, k);
+  }
+
+  function openChatGPT() {
+    const wordsArr = translations.map((translation) => translation.tagalog);
+    const randomWords = kRandomWords(wordsArr, 10);
+    console.log("randomWords", { randomWords })
+    const words = randomWords.join(", ");
+
+    navigator.clipboard.writeText(DEFAULT_PROMPT + "\n" + words);
 
     // Try to open the ChatGPT app
     window.location.href = "chatgpt://";
@@ -43,21 +56,18 @@ export function SentencesPage() {
   }
 
   return (
-    <Stack gap={2} justifyContent="space-around" height="100%">
-      <Typography variant="h1">Sentences</Typography>
+    <Stack gap={4} justifyContent="center" height="100%" padding={2} position="relative">
+      <Typography variant="h3">Sentences</Typography>
 
-      <Stack border="1px solid black" borderRadius={0}>
-        <Typography variant="subtitle1">ChatGPT prompt</Typography>
-        <TextareaAutosize
-          minRows={3}
-          value={prompt}
-          onChange={(e) => setPrompt(e.target.value)}
-        />
-      </Stack>
+      <Box border="1px solid black" borderRadius={5} padding={2}>
+        <Typography>Click below to copy todays prompt and be redirected to ChatGPT</Typography>
+      </Box>
 
       <Button variant="contained" onClick={openChatGPT} disabled={loading}>
-        Get full prompt
+        Let's go
       </Button>
+
+      <Box height={150} />
     </Stack>
   );
 }
