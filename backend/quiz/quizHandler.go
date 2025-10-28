@@ -4,7 +4,6 @@ import (
 	"backend/db"
 	"backend/entities"
 	"encoding/json"
-	"fmt"
 	"math/rand"
 	"net/http"
 	"time"
@@ -130,16 +129,46 @@ func postAnswers(w http.ResponseWriter, r *http.Request) {
 	storeAnswers(answers)
 }
 
+type streakResponse struct {
+	Streak int `json:"streak"`
+	Freeze int `json:"freeze"`
+}
+
 func getStreakStatus(w http.ResponseWriter, r *http.Request) {
 	dates := getActiveDates()
-	var previous time.Time = dates[0]
-	var streak int = 0
-	var freezeCount int = 0
+
+	streakData := getStreakStatusInternal(dates)
+
+	json.NewEncoder(w).Encode(streakData)
+}
+
+func getStreakStatusInternal(dates []time.Time) streakResponse {
+	if len(dates) == 0 {
+		return streakResponse{
+			Streak: 0,
+			Freeze: 0,
+		}
+	}
+
+	seen := make(map[int64]bool)
+	var normalisedDates []time.Time
+
+	for _, t := range dates {
+		normalisedT := time.Date(t.Year(), t.Month(), t.Day(), 0, 0, 0, 0, time.Local)
+
+		key := normalisedT.UnixNano()
+		if !seen[key] {
+			seen[key] = true
+			normalisedDates = append(normalisedDates, normalisedT)
+		}
+	}
+
+	var previous time.Time = normalisedDates[0]
+	var streak int = 1
+	var freezeCount int = 1
 	var freeze int = 0
 
-	for _, date := range dates[1:] {
-		fmt.Println(date.Sub(previous).Hours())
-
+	for _, date := range normalisedDates[1:] {
 		daysDifference := date.Sub(previous).Hours() / 24
 
 		if daysDifference == 1 {
@@ -156,8 +185,9 @@ func getStreakStatus(w http.ResponseWriter, r *http.Request) {
 
 			if freeze > 0 {
 				freeze--
+				streak++
 			} else {
-				streak = 0
+				streak = 1
 				freezeCount = 0
 			}
 		}
@@ -170,8 +200,8 @@ func getStreakStatus(w http.ResponseWriter, r *http.Request) {
 		previous = date
 	}
 
-	json.NewEncoder(w).Encode(map[string]interface{}{
-		"streak": streak,
-		"freeze": freeze,
-	})
+	return streakResponse{
+		Streak: streak,
+		Freeze: freeze,
+	}
 }
