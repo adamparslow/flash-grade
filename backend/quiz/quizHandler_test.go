@@ -207,3 +207,36 @@ func TestLotsWithManyGaps(t *testing.T) {
 		t.Errorf("unexpected response: got %+v, want %+v", result, expected)
 	}
 }
+
+func TestBigGap(t *testing.T) {
+	testDates := []time.Time{
+		time.Date(2022, 2, 10, 12, 0, 0, 0, time.Local),
+		time.Date(2022, 2, 11, 12, 0, 0, 0, time.Local),
+		time.Date(2022, 2, 12, 12, 0, 0, 0, time.Local),
+		time.Date(2022, 2, 13, 12, 0, 0, 0, time.Local),
+		time.Date(2022, 2, 14, 12, 0, 0, 0, time.Local),
+		time.Date(2022, 2, 15, 12, 0, 0, 0, time.Local),
+		time.Date(2022, 2, 16, 12, 0, 0, 0, time.Local),
+		time.Date(2022, 2, 17, 12, 0, 0, 0, time.Local),
+		time.Date(2022, 2, 18, 12, 0, 0, 0, time.Local),
+		time.Date(2022, 2, 19, 12, 0, 0, 0, time.Local),
+		time.Date(2022, 2, 20, 12, 0, 0, 0, time.Local),
+		time.Date(2022, 2, 21, 12, 0, 0, 0, time.Local),
+		time.Date(2022, 2, 22, 12, 0, 0, 0, time.Local),
+		time.Date(2022, 2, 23, 12, 0, 0, 0, time.Local),
+
+		time.Date(2022, 2, 28, 22, 10, 10, 0, time.Local),
+		time.Date(2022, 2, 28, 22, 11, 10, 0, time.Local),
+	}
+
+	result := getStreakStatusInternal(testDates)
+
+	expected := streakResponse{
+		Streak: 1,
+		Freeze: 0,
+	}
+
+	if !reflect.DeepEqual(result, expected) {
+		t.Errorf("unexpected response: got %+v, want %+v", result, expected)
+	}
+}

@@ -1,8 +1,25 @@
 import { Button, Stack, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { getStreak, postAnswers, type Answer, type Streak } from "../quiz/questionsApi";
+import { useEffect, useState } from "react";
 
 export function HomePage() {
   const navigate = useNavigate();
+
+  const [streak, setStreak] = useState<Streak | undefined>();
+
+  const testAnswer: Answer[] = [
+    {
+      correct: 1,
+      wrong: 1,
+      date: new Date(),
+      translationId: "1"
+    }
+  ]
+
+  useEffect(() => {
+    getStreak().then(response => setStreak(response));
+  }, []);
 
   return (
     <Stack gap={16} padding={4} justifyContent="center" height="100vh">
@@ -28,6 +45,11 @@ export function HomePage() {
         >
           Sentences
         </Button>
+        <Button onClick={() => postAnswers(testAnswer)}>
+          Submit Answer
+        </Button>
+
+        <Typography>Streak {JSON.stringify(streak) ?? "0"}</Typography>
       </Stack>
     </Stack>
   );

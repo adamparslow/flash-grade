@@ -4,6 +4,7 @@ import (
 	"backend/db"
 	"backend/entities"
 	"encoding/json"
+	"fmt"
 	"math/rand"
 	"net/http"
 	"time"
@@ -126,6 +127,8 @@ func postAnswers(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	fmt.Println("Answers", answers)
+
 	storeAnswers(answers)
 }
 
@@ -163,6 +166,8 @@ func getStreakStatusInternal(dates []time.Time) streakResponse {
 		}
 	}
 
+	fmt.Println("normalised", normalisedDates)
+
 	var previous time.Time = normalisedDates[0]
 	var streak int = 1
 	var freezeCount int = 1
@@ -172,23 +177,19 @@ func getStreakStatusInternal(dates []time.Time) streakResponse {
 		daysDifference := date.Sub(previous).Hours() / 24
 
 		if daysDifference == 1 {
+			fmt.Println("increment")
 			streak++
 			freezeCount++
 		} else {
-			differenceMinusFreeze := daysDifference - float64(freeze)
+			if daysDifference > float64(freeze)+1 {
+				fmt.Println("Cancel")
 
-			if differenceMinusFreeze < 0 {
 				freeze = 0
-				streak = 0
-				freezeCount = 0
-			}
-
-			if freeze > 0 {
-				freeze--
-				streak++
-			} else {
 				streak = 1
 				freezeCount = 0
+			} else if freeze > 0 {
+				freeze--
+				streak++
 			}
 		}
 
